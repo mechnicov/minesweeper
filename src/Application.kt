@@ -9,6 +9,9 @@ import io.ktor.features.*
 import org.slf4j.event.*
 import com.fasterxml.jackson.databind.*
 import io.ktor.jackson.*
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
+import com.mines.games.Games
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -16,6 +19,10 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
      DB.connect()
+
+    transaction {
+        SchemaUtils.create(Games)
+    }
 
     install(CallLogging) {
         level = Level.INFO
