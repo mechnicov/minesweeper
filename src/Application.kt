@@ -12,6 +12,7 @@ import io.ktor.jackson.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.games.Games
+import com.mines.settings.Settings
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -21,7 +22,7 @@ fun Application.module(testing: Boolean = false) {
      DB.connect()
 
     transaction {
-        SchemaUtils.create(Games)
+        SchemaUtils.create(Games, Settings)
     }
 
     install(CallLogging) {
