@@ -41,5 +41,7 @@ dependencies {
     implementation "io.github.cdimascio:dotenv-kotlin:6.2.2"
     implementation "org.jetbrains.exposed:exposed:0.17.9"
     implementation "org.postgresql:postgresql:42.2.19"
+    implementation "org.hibernate.validator:hibernate-validator:7.0.0.Final"
+    implementation "org.glassfish:jakarta.el:4.0.0"
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }
