@@ -112,6 +112,39 @@ class SettingsTest : ApplicationTest() {
             }
         }
     }
+
+    @DisplayName("Update Settings")
+    @Nested
+    inner class UpdateSettings {
+        @Test
+        fun `when exist`() {
+            withTestApplication(Application::module) {
+                createSettings(10, 10, 2)
+                val call = updateSettings(20, 15, 3)
+
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertEquals(
+                    mapOf("id" to 1, "width" to 20, "height" to 15, "bombsCount" to 3),
+                    mapper.readValue(call.response.content!!)
+                )
+            }
+        }
+
+        @Test
+        fun `when doesn't exist`() {
+            withTestApplication(Application::module) {
+                assertEquals(HttpStatusCode.NotFound, getSettings().response.status())
+
+                val call = updateSettings(20, 15, 3)
+
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertEquals(
+                    mapOf("id" to 1, "width" to 20, "height" to 15, "bombsCount" to 3),
+                    mapper.readValue(call.response.content!!)
+                )
+            }
+        }
+    }
 }
 
 val mapper = jacksonObjectMapper()
@@ -127,5 +160,13 @@ fun TestApplicationEngine.createSettings(width: Int, height: Int, bombsCount: In
 fun TestApplicationEngine.getSettings(): TestApplicationCall {
     return handleRequest(HttpMethod.Get, "/api/v1/settings") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+    }
+}
+
+fun TestApplicationEngine.updateSettings(width: Int, height: Int, bombsCount: Int): TestApplicationCall {
+    return handleRequest(HttpMethod.Put, "/api/v1/settings") {
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+
+        setBody(mapper.writeValueAsString(mapOf("width" to width, "height" to height, "bombsCount" to bombsCount)))
     }
 }
