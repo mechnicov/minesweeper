@@ -1,10 +1,9 @@
 package com.mines.users
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mines.ApplicationTest
 import com.mines.module
-import io.ktor.application.*
+import com.mines.mapper
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.Assert
@@ -19,7 +18,7 @@ class UsersTest : ApplicationTest() {
     inner class CreateUser {
         @Test
         fun `when successful`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 val call = createUser("user@example.com")
 
                 Assert.assertEquals(HttpStatusCode.OK, call.response.status())
@@ -32,7 +31,7 @@ class UsersTest : ApplicationTest() {
 
         @Test
         fun `when user exists`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 createUser("user@example.com")
                 val call = createUser("user@example.com")
 
@@ -53,5 +52,3 @@ fun TestApplicationEngine.createUser(email: String): TestApplicationCall {
         setBody(mapper.writeValueAsString(mapOf("email" to email)))
     }
 }
-
-val mapper = jacksonObjectMapper()

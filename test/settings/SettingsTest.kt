@@ -1,10 +1,9 @@
 package com.mines.settings
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mines.ApplicationTest
+import com.mines.mapper
 import com.mines.module
-import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.Assert.assertEquals
@@ -17,7 +16,7 @@ class SettingsTest : ApplicationTest() {
     inner class CreateSettings {
         @Test
         fun `when successful`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 val call = createSettings(10, 10, 2)
 
                 assertEquals(HttpStatusCode.OK, call.response.status())
@@ -30,7 +29,7 @@ class SettingsTest : ApplicationTest() {
 
         @Test
         fun `when bombs count is larger or equal than cells count`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 val call = createSettings(10, 10, 100)
 
                 assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
@@ -43,7 +42,7 @@ class SettingsTest : ApplicationTest() {
 
         @Test
         fun `when width is less than 2`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 val call = createSettings(1, 10, 2)
 
                 assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
@@ -56,7 +55,7 @@ class SettingsTest : ApplicationTest() {
 
         @Test
         fun `when height is less than 2`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 val call = createSettings(10, 1, 2)
 
                 assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
@@ -69,7 +68,7 @@ class SettingsTest : ApplicationTest() {
 
         @Test
         fun `when settings exist`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 createSettings(10, 10, 2)
                 val call = createSettings(10, 10, 2)
 
@@ -87,7 +86,7 @@ class SettingsTest : ApplicationTest() {
     inner class GetSettings {
         @Test
         fun `when exist`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 createSettings(10, 10, 2)
                 val call = getSettings()
 
@@ -101,7 +100,7 @@ class SettingsTest : ApplicationTest() {
 
         @Test
         fun `when doesn't exist`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 val call = getSettings()
 
                 assertEquals(HttpStatusCode.NotFound, call.response.status())
@@ -118,7 +117,7 @@ class SettingsTest : ApplicationTest() {
     inner class UpdateSettings {
         @Test
         fun `when exist`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 createSettings(10, 10, 2)
                 val call = updateSettings(20, 15, 3)
 
@@ -132,7 +131,7 @@ class SettingsTest : ApplicationTest() {
 
         @Test
         fun `when doesn't exist`() {
-            withTestApplication(Application::module) {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
                 assertEquals(HttpStatusCode.NotFound, getSettings().response.status())
 
                 val call = updateSettings(20, 15, 3)
@@ -146,8 +145,6 @@ class SettingsTest : ApplicationTest() {
         }
     }
 }
-
-val mapper = jacksonObjectMapper()
 
 fun TestApplicationEngine.createSettings(width: Int, height: Int, bombsCount: Int): TestApplicationCall {
     return handleRequest(HttpMethod.Post, "/api/v1/settings") {

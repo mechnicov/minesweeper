@@ -2,6 +2,11 @@ package com.mines
 
 import io.github.cdimascio.dotenv.dotenv
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
+import com.mines.games.Games
+import com.mines.settings.Settings
+import com.mines.users.Users
 
 object DB {
     private val dotenv = dotenv()
@@ -19,4 +24,10 @@ object DB {
             user = dbUser,
             password = dbPassword
         )
+
+    fun prepare() {
+        transaction {
+            SchemaUtils.create(Games, Settings, Users)
+        }
+    }
 }

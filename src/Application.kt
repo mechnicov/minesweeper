@@ -11,12 +11,7 @@ import com.fasterxml.jackson.databind.*
 import com.mines.api.v1.settingsRouter
 import com.mines.api.v1.usersRouter
 import io.ktor.jackson.*
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
-import com.mines.games.Games
-import com.mines.settings.Settings
 import com.mines.settings.SettingsServiceDB
-import com.mines.users.Users
 import com.mines.users.UsersServiceDB
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -24,11 +19,10 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
-     DB.connect()
-
-    transaction {
-        SchemaUtils.create(Games, Settings, Users)
-    }
+     if (!testing) {
+         DB.connect()
+         DB.prepare()
+     }
 
     install(CallLogging) {
         level = Level.INFO
