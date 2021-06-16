@@ -1,25 +1,23 @@
 package com.mines.api.v1
 
+import com.mines.settings.Setting
 import com.mines.settings.SettingsService
+import com.mines.validate
 import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import jakarta.validation.Validation
 
 fun Route.settingsRouter(settingsService: SettingsService) {
     route("/api/v1/settings") {
+        val validator = Validation.buildDefaultValidatorFactory().validator
+
         post {
-            with (call) {
-                val params = receiveParameters()
-
-                val width = requireNotNull(params["width"]).toInt()
-                val height = requireNotNull(params["height"]).toInt()
-                val bombsCount = requireNotNull(params["bombs_count"]).toInt()
-
-                val settings = settingsService.create(width, height, bombsCount)
-
-                respond(settings)
-            }
+            var settings = call.receive<Setting>()
+            settings.validate(validator)
+            settings = settingsService.create(settings.width, settings.height, settings.bombsCount)
+            call.respond(settings)
         }
     }
 }

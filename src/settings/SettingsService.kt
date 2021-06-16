@@ -2,6 +2,7 @@ package com.mines.settings
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import com.mines.UnprocessableEntityError
 
 interface SettingsService {
     suspend fun create(width: Int, height: Int, bombsCount: Int): Setting
@@ -12,19 +13,15 @@ class SettingsServiceDB : SettingsService {
         return transaction {
             addLogger(StdOutSqlLogger)
 
-            var settings = Settings.selectAll().limit(1).firstOrNull()
+            if (Settings.selectAll().limit(1).firstOrNull() != null ) throw UnprocessableEntityError("Settings exist")
 
-            if (settings == null) {
-                val id = Settings.insertAndGetId { s ->
-                    s[Settings.width] = width
-                    s[Settings.height] = height
-                    s[Settings.bombsCount] = bombsCount
-                }
-
-                settings = Settings.select { Settings.id eq id }.first()
+            val id = Settings.insertAndGetId { s ->
+                s[Settings.width] = width
+                s[Settings.height] = height
+                s[Settings.bombsCount] = bombsCount
             }
 
-            settings
+            Settings.select { Settings.id eq id }.first()
         }.asSetting()
     }
 

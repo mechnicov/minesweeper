@@ -50,6 +50,9 @@ fun Application.module(testing: Boolean = false) {
             exception<AuthorizationException> { cause ->
                 call.respond(HttpStatusCode.Forbidden)
             }
+            exception<UnprocessableEntityError> { e ->
+                call.respond(HttpStatusCode.UnprocessableEntity, ValidationError(e.message.toString(), HttpStatusCode.UnprocessableEntity.value))
+            }
         }
     }
 }
