@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.games.Games
 import com.mines.settings.Settings
 import com.mines.settings.SettingsServiceDB
+import com.mines.users.Users
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -26,7 +27,7 @@ fun Application.module(testing: Boolean = false) {
     val settingsService = SettingsServiceDB()
 
     transaction {
-        SchemaUtils.create(Games, Settings)
+        SchemaUtils.create(Games, Settings, Users)
     }
 
     install(CallLogging) {
