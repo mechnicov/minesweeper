@@ -13,6 +13,11 @@ fun Route.settingsRouter(settingsService: SettingsService) {
     route("/api/v1/settings") {
         val validator = Validation.buildDefaultValidatorFactory().validator
 
+        get {
+            val settings = settingsService.get()
+            call.respond(settings)
+        }
+
         post {
             var settings = call.receive<Setting>()
             settings.validate(validator)
