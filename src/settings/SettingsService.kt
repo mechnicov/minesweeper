@@ -3,9 +3,11 @@ package com.mines.settings
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.UnprocessableEntityError
+import io.ktor.features.*
 
 interface SettingsService {
     suspend fun create(width: Int, height: Int, bombsCount: Int): Setting
+    suspend fun get(): Setting
 }
 
 class SettingsServiceDB : SettingsService {
@@ -22,6 +24,14 @@ class SettingsServiceDB : SettingsService {
             }
 
             Settings.select { Settings.id eq id }.first()
+        }.asSetting()
+    }
+
+    override suspend fun get(): Setting {
+        return transaction {
+            addLogger(StdOutSqlLogger)
+
+            Settings.selectAll().limit(1).firstOrNull() ?: throw NotFoundException()
         }.asSetting()
     }
 
