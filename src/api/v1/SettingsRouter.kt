@@ -24,5 +24,12 @@ fun Route.settingsRouter(settingsService: SettingsService) {
             settings = settingsService.create(settings.width, settings.height, settings.bombsCount)
             call.respond(settings)
         }
+
+        put {
+            var settings = call.receive<Setting>()
+            settings.validate(validator)
+            settings = settingsService.update(settings.width, settings.height, settings.bombsCount)
+            call.respond(settings)
+        }
     }
 }
