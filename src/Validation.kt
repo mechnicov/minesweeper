@@ -15,5 +15,3 @@ fun <T : Any> T.validate(validator: Validator) {
 }
 
 fun <T : Any> ConstraintViolation<T>.messageWithFieldName() = "${this.propertyPath.toString().capitalize()} ${this.message}".trim()
-
-data class ValidationError(val message: String, val errorCode: Int)

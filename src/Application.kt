@@ -50,8 +50,11 @@ fun Application.module(testing: Boolean = false) {
             exception<AuthorizationException> { cause ->
                 call.respond(HttpStatusCode.Forbidden)
             }
+            exception<NotFoundException> {
+                call.respond(HttpStatusCode.NotFound, ErrorMessage("Resource not found", HttpStatusCode.NotFound.value))
+            }
             exception<UnprocessableEntityError> { e ->
-                call.respond(HttpStatusCode.UnprocessableEntity, ValidationError(e.message.toString(), HttpStatusCode.UnprocessableEntity.value))
+                call.respond(HttpStatusCode.UnprocessableEntity, ErrorMessage(e.message.toString(), HttpStatusCode.UnprocessableEntity.value))
             }
         }
     }
@@ -59,3 +62,4 @@ fun Application.module(testing: Boolean = false) {
 
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()
+data class ErrorMessage(val message: String, val errorCode: Int)
