@@ -81,6 +81,37 @@ class SettingsTest : ApplicationTest() {
             }
         }
     }
+
+    @DisplayName("Get Settings")
+    @Nested
+    inner class GetSettings {
+        @Test
+        fun `when exist`() {
+            withTestApplication(Application::module) {
+                createSettings(10, 10, 2)
+                val call = getSettings()
+
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertEquals(
+                    mapOf("id" to 1, "width" to 10, "height" to 10, "bombsCount" to 2),
+                    mapper.readValue(call.response.content!!)
+                )
+            }
+        }
+
+        @Test
+        fun `when doesn't exist`() {
+            withTestApplication(Application::module) {
+                val call = getSettings()
+
+                assertEquals(HttpStatusCode.NotFound, call.response.status())
+                assertEquals(
+                    mapOf("message" to "Resource not found", "errorCode" to 404),
+                    mapper.readValue(call.response.content!!)
+                )
+            }
+        }
+    }
 }
 
 val mapper = jacksonObjectMapper()
@@ -90,5 +121,11 @@ fun TestApplicationEngine.createSettings(width: Int, height: Int, bombsCount: In
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
 
         setBody(mapper.writeValueAsString(mapOf("width" to width, "height" to height, "bombsCount" to bombsCount)))
+    }
+}
+
+fun TestApplicationEngine.getSettings(): TestApplicationCall {
+    return handleRequest(HttpMethod.Get, "/api/v1/settings") {
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
     }
 }
