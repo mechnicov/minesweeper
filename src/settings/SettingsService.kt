@@ -8,6 +8,7 @@ import io.ktor.features.*
 interface SettingsService {
     suspend fun create(width: Int, height: Int, bombsCount: Int): Setting
     suspend fun get(): Setting
+    suspend fun update(width: Int, height: Int, bombsCount: Int): Setting
 }
 
 class SettingsServiceDB : SettingsService {
@@ -32,6 +33,22 @@ class SettingsServiceDB : SettingsService {
             addLogger(StdOutSqlLogger)
 
             Settings.selectAll().limit(1).firstOrNull() ?: throw NotFoundException()
+        }.asSetting()
+    }
+
+    override suspend fun update(width: Int, height: Int, bombsCount: Int): Setting {
+        return transaction {
+            addLogger(StdOutSqlLogger)
+
+            val settingsId = Settings.selectAll().limit(1).firstOrNull()?.asSetting()?.id ?: Settings.insertAndGetId {}.toString().toInt()
+
+            Settings.update({ Settings.id eq settingsId }) { s ->
+                s[Settings.width] = width
+                s[Settings.height] = height
+                s[Settings.bombsCount] = bombsCount
+            }
+
+            Settings.select { Settings.id eq settingsId }.first()
         }.asSetting()
     }
 
