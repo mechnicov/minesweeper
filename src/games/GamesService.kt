@@ -5,10 +5,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.cells.Cell
 import com.mines.settings.Setting
 import com.mines.users.User
+import io.ktor.features.*
 import java.util.*
 
 interface GamesService {
     suspend fun create(): GameData
+    suspend fun findById(id: Int): GameData
 }
 
 class GamesServiceDB : GamesService {
@@ -44,6 +46,16 @@ class GamesServiceDB : GamesService {
             }
 
             newGame.data()
+        }
+    }
+
+    override suspend fun findById(id: Int): GameData {
+        return transaction {
+            addLogger(StdOutSqlLogger)
+
+            val game = Game.findById(id)
+
+            game?.data() ?: throw NotFoundException()
         }
     }
 }
