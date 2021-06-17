@@ -153,10 +153,78 @@ class GamesTest : ApplicationTest() {
             }
         }
     }
+
+    @DisplayName("Mark Cell")
+    @Nested
+    inner class MarkCell {
+        @Test
+        fun `when cell is closed`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                transaction {
+                    Setting.new {
+                        width = 2
+                        height = 3
+                        bombsCount = 1
+                    }
+                }
+
+                val game: GameData = mapper.readValue(createGame().response.content!!)
+                val gameId = game.id
+
+                val call = markCell(gameId, 0, 2)
+                val updatedGame: GameData = mapper.readValue(call.response.content!!)
+
+                Assert.assertEquals(updatedGame.id, gameId)
+                Assert.assertEquals(updatedGame.width, 2)
+                Assert.assertEquals(updatedGame.height, 3)
+                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+
+                Assert.assertEquals(updatedGame.cells.size, 6)
+                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 2 }?.status, CellStatus.MARKED.value)
+                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 5)
+            }
+        }
+
+        @Test
+        fun `when cell is marked`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                transaction {
+                    Setting.new {
+                        width = 2
+                        height = 3
+                        bombsCount = 1
+                    }
+                }
+
+                val game: GameData = mapper.readValue(createGame().response.content!!)
+                val gameId = game.id
+
+                markCell(gameId, 0, 2)
+                val call = markCell(gameId, 0, 2)
+
+                val updatedGame: GameData = mapper.readValue(call.response.content!!)
+
+                Assert.assertEquals(updatedGame.id, gameId)
+                Assert.assertEquals(updatedGame.width, 2)
+                Assert.assertEquals(updatedGame.height, 3)
+                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+
+                Assert.assertEquals(updatedGame.cells.size, 6)
+                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 6)
+            }
+        }
+    }
 }
 
 fun TestApplicationEngine.createGame(): TestApplicationCall {
     return handleRequest(HttpMethod.Post, "/api/v1/games") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+    }
+}
+
+fun TestApplicationEngine.markCell(gameId: Int, x: Int, y: Int): TestApplicationCall {
+    return handleRequest(HttpMethod.Post, "/api/v1/games/$gameId/mark") {
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(mapper.writeValueAsString(mapOf("x" to x, "y" to y)))
     }
 }
