@@ -5,11 +5,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.UnprocessableEntityError
 
 interface UsersService {
-    suspend fun create(email: String): User
+    suspend fun create(email: String): UserData
 }
 
 class UsersServiceDB : UsersService {
-    override suspend fun create(email: String): User {
+    override suspend fun create(email: String): UserData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
@@ -21,7 +21,7 @@ class UsersServiceDB : UsersService {
         }.asUser()
     }
 
-    private fun ResultRow.asUser() = User(
+    private fun ResultRow.asUser() = UserData(
         this[Users.id].value,
         this[Users.email],
         this[Users.isAdmin],

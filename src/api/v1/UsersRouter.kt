@@ -1,6 +1,6 @@
 package com.mines.api.v1
 
-import com.mines.users.User
+import com.mines.users.UserData
 import com.mines.users.UsersService
 import com.mines.validate
 import io.ktor.application.*
@@ -14,7 +14,7 @@ fun Route.usersRouter(usersService: UsersService) {
         val validator = Validation.buildDefaultValidatorFactory().validator
 
         post {
-            var user = call.receive<User>()
+            var user = call.receive<UserData>()
             user.validate(validator)
             user = usersService.create(user.email)
             call.respond(user)

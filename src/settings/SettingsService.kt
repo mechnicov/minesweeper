@@ -6,13 +6,13 @@ import com.mines.UnprocessableEntityError
 import io.ktor.features.*
 
 interface SettingsService {
-    suspend fun create(width: Int, height: Int, bombsCount: Int): Setting
-    suspend fun get(): Setting
-    suspend fun update(width: Int, height: Int, bombsCount: Int): Setting
+    suspend fun create(width: Int, height: Int, bombsCount: Int): SettingsData
+    suspend fun get(): SettingsData
+    suspend fun update(width: Int, height: Int, bombsCount: Int): SettingsData
 }
 
 class SettingsServiceDB : SettingsService {
-    override suspend fun create(width: Int, height: Int, bombsCount: Int): Setting {
+    override suspend fun create(width: Int, height: Int, bombsCount: Int): SettingsData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
@@ -25,22 +25,22 @@ class SettingsServiceDB : SettingsService {
             }
 
             Settings.select { Settings.id eq id }.first()
-        }.asSetting()
+        }.asSettingsData()
     }
 
-    override suspend fun get(): Setting {
+    override suspend fun get(): SettingsData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
             Settings.selectAll().limit(1).firstOrNull() ?: throw NotFoundException()
-        }.asSetting()
+        }.asSettingsData()
     }
 
-    override suspend fun update(width: Int, height: Int, bombsCount: Int): Setting {
+    override suspend fun update(width: Int, height: Int, bombsCount: Int): SettingsData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
-            val settingsId = Settings.selectAll().limit(1).firstOrNull()?.asSetting()?.id ?: Settings.insertAndGetId {}.toString().toInt()
+            val settingsId = Settings.selectAll().limit(1).firstOrNull()?.asSettingsData()?.id ?: Settings.insertAndGetId {}.toString().toInt()
 
             Settings.update({ Settings.id eq settingsId }) { s ->
                 s[Settings.width] = width
@@ -49,10 +49,10 @@ class SettingsServiceDB : SettingsService {
             }
 
             Settings.select { Settings.id eq settingsId }.first()
-        }.asSetting()
+        }.asSettingsData()
     }
 
-    private fun ResultRow.asSetting() = Setting(
+    private fun ResultRow.asSettingsData() = SettingsData(
         this[Settings.id].value,
         this[Settings.width],
         this[Settings.height],

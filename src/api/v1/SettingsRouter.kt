@@ -1,6 +1,6 @@
 package com.mines.api.v1
 
-import com.mines.settings.Setting
+import com.mines.settings.SettingsData
 import com.mines.settings.SettingsService
 import com.mines.validate
 import io.ktor.application.*
@@ -19,14 +19,14 @@ fun Route.settingsRouter(settingsService: SettingsService) {
         }
 
         post {
-            var settings = call.receive<Setting>()
+            var settings = call.receive<SettingsData>()
             settings.validate(validator)
             settings = settingsService.create(settings.width, settings.height, settings.bombsCount)
             call.respond(settings)
         }
 
         put {
-            var settings = call.receive<Setting>()
+            var settings = call.receive<SettingsData>()
             settings.validate(validator)
             settings = settingsService.update(settings.width, settings.height, settings.bombsCount)
             call.respond(settings)
