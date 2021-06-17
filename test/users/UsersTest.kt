@@ -2,6 +2,7 @@ package com.mines.users
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mines.ApplicationTest
+import com.mines.games.GameData
 import com.mines.module
 import com.mines.mapper
 import io.ktor.http.*
@@ -23,7 +24,7 @@ class UsersTest : ApplicationTest() {
 
                 Assert.assertEquals(HttpStatusCode.OK, call.response.status())
                 Assert.assertEquals(
-                    mapOf("id" to 1, "email" to "user@example.com", "isAdmin" to false),
+                    mapOf("id" to 1, "email" to "user@example.com", "isAdmin" to false, "games" to emptyList<GameData>()),
                     mapper.readValue(call.response.content!!)
                 )
             }

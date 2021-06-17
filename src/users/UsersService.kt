@@ -9,21 +9,17 @@ interface UsersService {
 }
 
 class UsersServiceDB : UsersService {
-    override suspend fun create(email: String): UserData {
+    override suspend fun create(emailParam: String): UserData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
-            if (Users.select { Users.email eq email }.firstOrNull() != null) throw UnprocessableEntityError("User exists")
+            if (Users.select { Users.email eq emailParam }.firstOrNull() != null) throw UnprocessableEntityError("User exists")
 
-            val id = Users.insertAndGetId { s -> s[Users.email] = email }
+            val newUser = User.new {
+                email = emailParam
+            }
 
-            Users.select { Users.id eq id }.first()
-        }.asUser()
+            newUser.data()
+        }
     }
-
-    private fun ResultRow.asUser() = UserData(
-        this[Users.id].value,
-        this[Users.email],
-        this[Users.isAdmin],
-    )
 }

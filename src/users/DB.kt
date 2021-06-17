@@ -1,5 +1,8 @@
 package com.mines.users
 
+import com.mines.games.Game
+import com.mines.games.GameData
+import com.mines.games.Games
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -15,17 +18,20 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 
     var email by Users.email
     var isAdmin by Users.isAdmin
+    val games by Game referrersOn Games.user
 
     fun data(): UserData =
         UserData(
             this.id.value,
             this.email,
             this.isAdmin,
+            this.games.map { it.data() }.toSet()
         )
 }
 
 data class UserData(
     val id: Int,
     val email: String,
-    val isAdmin: Boolean
+    val isAdmin: Boolean,
+    val games: Set<GameData> = emptySet(),
 )
