@@ -8,8 +8,10 @@ import io.ktor.http.*
 import io.ktor.features.*
 import org.slf4j.event.*
 import com.fasterxml.jackson.databind.*
+import com.mines.api.v1.gamesRouter
 import com.mines.api.v1.settingsRouter
 import com.mines.api.v1.usersRouter
+import com.mines.games.GamesServiceDB
 import io.ktor.jackson.*
 import com.mines.settings.SettingsServiceDB
 import com.mines.users.UsersServiceDB
@@ -36,6 +38,7 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
+        gamesRouter(GamesServiceDB())
         settingsRouter(SettingsServiceDB())
         usersRouter(UsersServiceDB())
 
