@@ -24,5 +24,9 @@ fun Route.gamesRouter(gamesService: GamesServiceDB) {
             val game = gamesService.findById(id)
             call.respond(game)
         }
+
+        get {
+            call.respond(gamesService.all())
+        }
     }
 }
