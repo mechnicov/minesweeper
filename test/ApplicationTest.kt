@@ -1,5 +1,7 @@
 package com.mines
 
+import com.mines.cells.Cells
+import com.mines.games.Games
 import com.mines.settings.Settings
 import com.mines.users.Users
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -18,7 +20,7 @@ open class ApplicationTest {
     @AfterEach
     fun cleanup() {
         transaction {
-            SchemaUtils.drop(Settings, Users)
+            SchemaUtils.drop(Settings, Users, Games, Cells)
         }
     }
 }

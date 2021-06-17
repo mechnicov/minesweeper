@@ -1,5 +1,6 @@
 package com.mines
 
+import com.mines.cells.Cells
 import com.mines.games.Games
 import com.mines.settings.Settings
 import com.mines.users.Users
@@ -27,7 +28,7 @@ object DBTest {
 
     fun prepare() {
         transaction {
-            SchemaUtils.create(Games, Settings, Users)
+            SchemaUtils.create(Games, Settings, Users, Cells)
         }
     }
 }
