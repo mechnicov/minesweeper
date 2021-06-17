@@ -4,6 +4,9 @@ import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.IntIdTable
+import com.mines.cells.Cell
+import com.mines.cells.CellData
+import com.mines.cells.Cells
 
 object Games : IntIdTable() {
     val width = integer("width")
@@ -17,6 +20,7 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
     var width by Games.width
     var height by Games.height
     var status by Games.status
+    val cells by Cell referrersOn Cells.game
 
     fun data(): GameData {
         return GameData(
@@ -24,6 +28,7 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
             this.width,
             this.height,
             this.status.value,
+            this.cells.map { it.data() }.toSet()
         )
     }
 }
@@ -33,6 +38,7 @@ data class GameData(
     val width: Int,
     val height: Int,
     val status: String,
+    val cells: Set<CellData>
 )
 
 enum class GameStatus(val value: String) {

@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.dotenv
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import com.mines.cells.Cells
 import com.mines.games.Games
 import com.mines.settings.Settings
 import com.mines.users.Users
@@ -27,7 +28,7 @@ object DB {
 
     fun prepare() {
         transaction {
-            SchemaUtils.create(Games, Settings, Users)
+            SchemaUtils.create(Settings, Users, Games, Cells)
         }
     }
 }
