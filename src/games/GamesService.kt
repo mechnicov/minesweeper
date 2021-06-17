@@ -11,6 +11,7 @@ import java.util.*
 interface GamesService {
     suspend fun create(): GameData
     suspend fun findById(id: Int): GameData
+    suspend fun all(): List<GameData>
 }
 
 class GamesServiceDB : GamesService {
@@ -56,6 +57,12 @@ class GamesServiceDB : GamesService {
             val game = Game.findById(id)
 
             game?.data() ?: throw NotFoundException()
+        }
+    }
+
+    override suspend fun all(): List<GameData> {
+        return transaction {
+            Game.all().map { it.data() }
         }
     }
 }
