@@ -20,7 +20,7 @@ object DB {
 
     fun connect() =
         Database.connect(
-            "jdbc:postgresql://$host:$port/$dbName",
+            "jdbc:postgresql://$host:$port/$dbName?reWriteBatchedInserts=true",
             driver = "org.postgresql.Driver",
             user = dbUser,
             password = dbPassword
