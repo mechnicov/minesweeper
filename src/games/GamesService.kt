@@ -2,7 +2,7 @@ package com.mines.games
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.mines.cells.Cell
+import com.mines.cells.Cells
 import com.mines.cells.CellStatus
 import com.mines.settings.Setting
 import com.mines.users.User
@@ -35,17 +35,14 @@ class GamesServiceDB : GamesService {
                 user = gameUser
             }
 
-            val map = BombInstaller.bombsMap(settingsWidth, settingsHeight, settingsBombsCount)
+            val map = MapGenerator(settingsWidth, settingsHeight, settingsBombsCount).generateMap()
 
-            for (i in 0 until settingsWidth) {
-                for (j in 0 until settingsHeight) {
-                    Cell.new {
-                        game = newGame
-                        x = i
-                        y = j
-                        isBomb = map[i][j]
-                    }
-                }
+            Cells.batchInsert(map) { cell ->
+                this[Cells.x] = cell.x
+                this[Cells.y] = cell.y
+                this[Cells.isBomb] = cell.isBomb
+                this[Cells.bombsNear] = cell.bombsNear
+                this[Cells.game] = newGame.id
             }
 
             newGame.data()
@@ -87,27 +84,5 @@ class GamesServiceDB : GamesService {
 
             game.data()
         }
-    }
-}
-
-object BombInstaller {
-    fun bombsMap(width: Int, height: Int, bombsCount: Int): Array<Array<Boolean>> {
-        val map = Array(width) { Array(height) { false } }
-        var installedBombsCount = 0
-
-        install@ while (true) {
-            for (i in 0 until width) {
-                for (j in 0 until height) {
-                    if (!map[i][j] && arrayOf(true, false).random()) {
-                        installedBombsCount++
-                        map[i][j] = true
-
-                        if (installedBombsCount >= bombsCount) break@install
-                    }
-                }
-            }
-        }
-
-        return map
     }
 }
