@@ -11,6 +11,7 @@ object Cells : IntIdTable() {
     val x = integer("x")
     val y = integer("y")
     val isBomb = bool("is_bomb").default(false)
+    val bombsNear = integer("bombs_near")
     val status = enumerationByName("status", 20, CellStatus::class).default(CellStatus.CLOSED)
     val game = reference("game_id", Games)
 }
@@ -21,6 +22,7 @@ class Cell(id: EntityID<Int>) : IntEntity(id) {
     var x by Cells.x
     var y by Cells.y
     var isBomb by Cells.isBomb
+    var bombsNear by Cells.bombsNear
     var status by Cells.status
     var game by Game referencedOn Cells.game
 
@@ -30,6 +32,7 @@ class Cell(id: EntityID<Int>) : IntEntity(id) {
             this.x,
             this.y,
             this.isBomb,
+            this.bombsNear,
             this.status.value,
             this.game.id.value,
         )
@@ -40,6 +43,7 @@ data class CellData(
     val x: Int,
     val y: Int,
     val isBomb: Boolean,
+    var bombsNear: Int,
     val status: String,
     val gameId: Int,
 )
