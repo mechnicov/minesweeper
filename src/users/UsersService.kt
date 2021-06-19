@@ -3,22 +3,25 @@ package com.mines.users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.UnprocessableEntityError
+import com.mines.validate
 import org.mindrot.jbcrypt.BCrypt
 
 interface UsersService {
-    suspend fun create(email: String, password: String): UserData
+    suspend fun create(userData: UserData): UserData
 }
 
 class UsersServiceDB : UsersService {
-    override suspend fun create(emailParam: String, passwordParam: String): UserData {
+    override suspend fun create(userData: UserData): UserData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
-            if (Users.select { Users.email eq emailParam }.firstOrNull() != null) throw UnprocessableEntityError("User exists")
+            userData.validate()
+
+            if (Users.select { Users.email eq userData.email }.firstOrNull() != null) throw UnprocessableEntityError("User exists")
 
             val newUser = User.new {
-                email = emailParam
-                password = BCrypt.hashpw(passwordParam, BCrypt.gensalt())
+                email = userData.email
+                password = BCrypt.hashpw(userData.password, BCrypt.gensalt())
             }
 
             newUser.data()
