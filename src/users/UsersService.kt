@@ -3,11 +3,13 @@ package com.mines.users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.UnprocessableEntityError
+import com.mines.jwt.Login
 import com.mines.validate
 import org.mindrot.jbcrypt.BCrypt
 
 interface UsersService {
     suspend fun create(userData: UserData): UserData
+    suspend fun auth(login: Login)
 }
 
 class UsersServiceDB : UsersService {
@@ -25,6 +27,17 @@ class UsersServiceDB : UsersService {
             }
 
             newUser.data()
+        }
+    }
+
+    override suspend fun auth(login: Login) {
+        transaction {
+            addLogger(StdOutSqlLogger)
+
+            val user =
+                Users.select { Users.email eq login.email }.firstOrNull() ?: throw UnprocessableEntityError("Bad credentials")
+
+            if (!BCrypt.checkpw(login.password, user[Users.password])) throw UnprocessableEntityError("Bad credentials")
         }
     }
 }
