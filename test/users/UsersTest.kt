@@ -24,7 +24,7 @@ class UsersTest : ApplicationTest() {
 
                 Assert.assertEquals(HttpStatusCode.OK, call.response.status())
                 Assert.assertEquals(
-                    mapOf("id" to 1, "email" to "user@example.com", "isAdmin" to false, "games" to emptyList<GameData>()),
+                    mapOf("id" to 1, "email" to "user@example.com", "isAdmin" to false, "games" to emptyList<GameData>(), "password" to "[FILTERED]"),
                     mapper.readValue(call.response.content!!)
                 )
             }
@@ -50,6 +50,6 @@ fun TestApplicationEngine.createUser(email: String): TestApplicationCall {
     return handleRequest(HttpMethod.Post, "/api/v1/users") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
 
-        setBody(mapper.writeValueAsString(mapOf("email" to email)))
+        setBody(mapper.writeValueAsString(mapOf("email" to email, "password" to "qwerty")))
     }
 }
