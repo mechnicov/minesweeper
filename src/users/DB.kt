@@ -11,6 +11,7 @@ import org.jetbrains.exposed.dao.IntIdTable
 object Users : IntIdTable() {
     val email = text("email").uniqueIndex()
     val isAdmin = bool("is_admin").default(false)
+    val password = text("password")
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {
@@ -18,6 +19,7 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 
     var email by Users.email
     var isAdmin by Users.isAdmin
+    var password by Users.password
     val games by Game referrersOn Games.user
 
     fun data(): UserData =
@@ -25,13 +27,15 @@ class User(id: EntityID<Int>) : IntEntity(id) {
             this.id.value,
             this.email,
             this.isAdmin,
+            "[FILTERED]",
             this.games.map { it.data() }.toSet()
         )
 }
 
 data class UserData(
     val id: Int,
-    val email: String,
+    val email: String = "",
     val isAdmin: Boolean,
+    val password: String = "",
     val games: Set<GameData> = emptySet(),
 )

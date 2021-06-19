@@ -7,16 +7,13 @@ import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import jakarta.validation.Validation
 
 fun Route.usersRouter(usersService: UsersService) {
     route("/api/v1/users") {
-        val validator = Validation.buildDefaultValidatorFactory().validator
-
         post {
             var user = call.receive<UserData>()
-            user.validate(validator)
-            user = usersService.create(user.email)
+            user.validate()
+            user = usersService.create(user.email, user.password)
             call.respond(user)
         }
     }

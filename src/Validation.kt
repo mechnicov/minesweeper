@@ -1,5 +1,6 @@
 package com.mines
 
+import com.mines.users.UserData
 import io.ktor.features.*
 import jakarta.validation.ConstraintViolation
 import jakarta.validation.Validator
@@ -15,3 +16,7 @@ fun <T : Any> T.validate(validator: Validator) {
 }
 
 fun <T : Any> ConstraintViolation<T>.messageWithFieldName() = "${this.propertyPath.toString().capitalize()} ${this.message}".trim()
+
+fun UserData.validate() {
+    if (email.isBlank() || password.length < 6) throw UnprocessableEntityError("Credentials must exist. Minimal password length is 6 chars")
+}

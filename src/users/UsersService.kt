@@ -3,13 +3,14 @@ package com.mines.users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.UnprocessableEntityError
+import org.mindrot.jbcrypt.BCrypt
 
 interface UsersService {
-    suspend fun create(email: String): UserData
+    suspend fun create(email: String, password: String): UserData
 }
 
 class UsersServiceDB : UsersService {
-    override suspend fun create(emailParam: String): UserData {
+    override suspend fun create(emailParam: String, passwordParam: String): UserData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
@@ -17,6 +18,7 @@ class UsersServiceDB : UsersService {
 
             val newUser = User.new {
                 email = emailParam
+                password = BCrypt.hashpw(passwordParam, BCrypt.gensalt())
             }
 
             newUser.data()
