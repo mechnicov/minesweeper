@@ -42,6 +42,19 @@ fun Route.gamesRouter(gamesService: GamesServiceDB) {
 
             call.respond(game)
         }
+
+        post("/{id}/open") {
+            val id = requireNotNull(call.parameters["id"]).toInt()
+
+            val coordinates = call.receive<CellCoordinate>()
+
+            val x = coordinates.x
+            val y = coordinates.y
+
+            val game = gamesService.openCell(id, x, y)
+
+            call.respond(game)
+        }
     }
 }
 

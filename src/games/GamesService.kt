@@ -14,6 +14,7 @@ interface GamesService {
     suspend fun findById(id: Int): GameData
     suspend fun all(): List<GameData>
     suspend fun markCell(gameId: Int, x: Int, y: Int): GameData
+    suspend fun openCell(gameId: Int, x: Int, y: Int): GameData
 }
 
 class GamesServiceDB : GamesService {
@@ -81,6 +82,22 @@ class GamesServiceDB : GamesService {
                 CellStatus.CLOSED -> cell.status = CellStatus.MARKED
                 CellStatus.MARKED -> cell.status = CellStatus.CLOSED
             }
+
+            game.data()
+        }
+    }
+
+    override suspend fun openCell(gameId: Int, x: Int, y: Int): GameData {
+        return transaction {
+            addLogger(StdOutSqlLogger)
+
+            val game = Game.findById(gameId)
+
+            val cell = game?.cells?.find { it.x == x && it.y == y }
+
+            cell ?: throw NotFoundException()
+
+            CellOpener.tryToOpen(cell)
 
             game.data()
         }
