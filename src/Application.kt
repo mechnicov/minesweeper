@@ -8,6 +8,7 @@ import io.ktor.http.*
 import io.ktor.features.*
 import org.slf4j.event.*
 import com.fasterxml.jackson.databind.*
+import com.mines.api.v1.authenticationRouter
 import com.mines.api.v1.gamesRouter
 import com.mines.api.v1.settingsRouter
 import com.mines.api.v1.usersRouter
@@ -26,6 +27,8 @@ fun Application.module(testing: Boolean = false) {
          DB.prepare()
      }
 
+    val usersService = UsersServiceDB()
+
     install(CallLogging) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/") }
@@ -40,7 +43,8 @@ fun Application.module(testing: Boolean = false) {
     routing {
         gamesRouter(GamesServiceDB())
         settingsRouter(SettingsServiceDB())
-        usersRouter(UsersServiceDB())
+        usersRouter(usersService)
+        authenticationRouter(usersService)
 
         install(StatusPages) {
             exception<AuthenticationException> { cause ->
