@@ -45,6 +45,7 @@ dependencies {
     implementation "org.glassfish:jakarta.el:4.0.0"
     implementation "org.junit.jupiter:junit-jupiter:5.7.0"
     implementation "org.assertj:assertj-core:3.19.0"
+    implementation "org.mindrot:jbcrypt:0.4"
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }
 
