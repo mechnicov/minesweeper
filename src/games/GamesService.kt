@@ -1,9 +1,8 @@
 package com.mines.games
 
+import com.mines.cells.Cell
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.mines.cells.Cells
-import com.mines.cells.CellStatus
 import com.mines.settings.Setting
 import com.mines.users.User
 import io.ktor.features.*
@@ -24,27 +23,16 @@ class GamesServiceDB : GamesService {
 
             val settings = Setting.all().limit(1).first()
 
-            val settingsWidth = settings.width
-            val settingsHeight = settings.height
-            val settingsBombsCount = settings.bombsCount
-
             val gameUser = User.new { email = "${UUID.randomUUID()}@example.com" } // TODO: authenticated user
 
             val newGame = Game.new {
-                width = settingsWidth
-                height = settingsHeight
+                width = settings.width
+                height = settings.height
                 user = gameUser
             }
 
-            val map = MapGenerator(settingsWidth, settingsHeight, settingsBombsCount).generateMap()
-
-            Cells.batchInsert(map) { cell ->
-                this[Cells.x] = cell.x
-                this[Cells.y] = cell.y
-                this[Cells.isBomb] = cell.isBomb
-                this[Cells.bombsNear] = cell.bombsNear
-                this[Cells.game] = newGame.id
-            }
+            val map = MapGenerator(settings.width, settings.height, settings.bombsCount).generateMap()
+            CellsGenerator.generateCellsForGame(newGame, map)
 
             newGame.data()
         }
@@ -70,20 +58,11 @@ class GamesServiceDB : GamesService {
         return transaction {
             addLogger(StdOutSqlLogger)
 
-            val game = Game.findById(gameId)
+            val cell = findCellByGameIdAndCoordinates(gameId, x, y)
 
-            game ?: throw NotFoundException()
+            CellMarker.tryToMark(cell)
 
-            val cell = game.cells.find { it.x == x && it.y == y }
-
-            cell ?: throw NotFoundException()
-
-            when (cell.status) {
-                CellStatus.CLOSED -> cell.status = CellStatus.MARKED
-                CellStatus.MARKED -> cell.status = CellStatus.CLOSED
-            }
-
-            game.data()
+            cell.game.data()
         }
     }
 
@@ -91,15 +70,15 @@ class GamesServiceDB : GamesService {
         return transaction {
             addLogger(StdOutSqlLogger)
 
-            val game = Game.findById(gameId)
+            val cell = findCellByGameIdAndCoordinates(gameId, x, y)
 
-            val cell = game?.cells?.find { it.x == x && it.y == y }
+            CellOpener(cell).tryToOpen()
 
-            cell ?: throw NotFoundException()
-
-            CellOpener.tryToOpen(cell)
-
-            game.data()
+            cell.game.data()
         }
+    }
+
+    private fun findCellByGameIdAndCoordinates(gameId: Int, x: Int, y: Int): Cell {
+        return Game.findById(gameId)?.cells?.find { it.x == x && it.y == y } ?: throw NotFoundException()
     }
 }

@@ -39,15 +39,6 @@ class MapGenerator(private val width: Int, private val height: Int, private val 
     }
 
     private fun bombsNear(x: Int, y: Int, locations: MutableList<ArrayList<Int>>): Int {
-        return arrayListOf(
-            arrayListOf(x + 1, y),
-            arrayListOf(x - 1, y),
-            arrayListOf(x, y + 1),
-            arrayListOf(x, y - 1),
-            arrayListOf(x - 1, y - 1),
-            arrayListOf(x - 1, y + 1),
-            arrayListOf(x + 1, y - 1),
-            arrayListOf(x + 1, y + 1)
-        ).count { locations.contains(it) }
+        return NearCoordinatesCalculator.nearCoordinates(x, y).count { locations.contains(it) }
     }
 }

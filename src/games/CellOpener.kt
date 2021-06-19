@@ -1,37 +1,45 @@
 package com.mines.games
 
 import com.mines.cells.Cell
-import com.mines.cells.CellStatus
+import com.mines.cells.CellStatus.*
+import com.mines.games.GameStatus.*
 
-object CellOpener {
-    fun tryToOpen(cell: Cell) {
-        val game = cell.game
+class CellOpener(private val cell: Cell) {
+    private val game = cell.game
 
-        if (game.status != GameStatus.IN_PROGRESS || cell.status != CellStatus.CLOSED) return
+    fun tryToOpen() {
+        if (cell.status != CLOSED) return
 
-        if (cell.isBomb) return finish(game)
+        if (cell.isBomb) return finishFail()
 
         open(cell)
     }
 
     private fun open(cell: Cell) {
-        cell.status = CellStatus.EMPTY
+        if (game.status != IN_PROGRESS) return
+
+        cell.status = EMPTY
+
+        if (game.cells.asSequence().filter { !it.isBomb }.all { it.status == EMPTY }) return finishWin()
 
         if (cell.bombsNear == 0) {
             NearCoordinatesCalculator.
                 nearCoordinates(cell.x, cell.y).
                 forEach { coordinates ->
                     val nearCell =
-                        cell.game.cells.find { it.x == coordinates.first() && it.y == coordinates.last() } ?: return@forEach
+                        game.cells.find { it.x == coordinates.first() && it.y == coordinates.last() } ?: return@forEach
 
-                    if (nearCell.status == CellStatus.CLOSED && !nearCell.isBomb) open(nearCell)
+                    if (nearCell.status == CLOSED && !nearCell.isBomb) open(nearCell)
                 }
         }
     }
 
-    private fun finish(game: Game) {
-        game.status = GameStatus.FAIL
+    private fun finishFail() {
+        game.status = FAIL
+    }
 
-        game.cells.forEach { it.status = CellStatus.CLOSED }
+    private fun finishWin() {
+        game.status = WON
+        game.cells.filter { it.isBomb }.forEach { it.status = MARKED }
     }
 }
