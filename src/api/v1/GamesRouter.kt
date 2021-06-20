@@ -1,6 +1,7 @@
 package com.mines.api.v1
 
 import com.mines.games.GamesServiceDB
+import com.mines.jwt.checkIsGameOwner
 import com.mines.jwt.login
 import io.ktor.application.*
 import io.ktor.request.*
@@ -14,19 +15,23 @@ fun Route.gamesRouter(gamesService: GamesServiceDB) {
             call.respond(game)
         }
 
+        get {
+            call.respond(gamesService.all(userEmail = call.login?.email.toString()))
+        }
+
         get("/{id}") {
             val id = requireNotNull(call.parameters["id"]).toInt()
+
+            call.checkIsGameOwner(id)
 
             val game = gamesService.findById(id)
             call.respond(game)
         }
 
-        get {
-            call.respond(gamesService.all())
-        }
-
         post("/{id}/mark") {
             val id = requireNotNull(call.parameters["id"]).toInt()
+
+            call.checkIsGameOwner(id)
 
             val coordinates = call.receive<CellCoordinate>()
 
@@ -37,6 +42,8 @@ fun Route.gamesRouter(gamesService: GamesServiceDB) {
 
         post("/{id}/open") {
             val id = requireNotNull(call.parameters["id"]).toInt()
+
+            call.checkIsGameOwner(id)
 
             val coordinates = call.receive<CellCoordinate>()
 

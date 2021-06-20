@@ -11,7 +11,7 @@ import io.ktor.features.*
 interface GamesService {
     suspend fun create(userEmail: String): GameData
     suspend fun findById(id: Int): GameData
-    suspend fun all(): List<GameData>
+    suspend fun all(userEmail: String): List<GameData>
     suspend fun markCell(gameId: Int, x: Int, y: Int): GameData
     suspend fun openCell(gameId: Int, x: Int, y: Int): GameData
 }
@@ -48,9 +48,9 @@ class GamesServiceDB : GamesService {
         }
     }
 
-    override suspend fun all(): List<GameData> {
+    override suspend fun all(userEmail: String): List<GameData> {
         return transaction {
-            Game.all().map { it.data() }
+            User.find { Users.email eq userEmail }.first().games.map { it.data() }
         }
     }
 

@@ -6,6 +6,8 @@ import com.mines.cells.CellStatus
 import com.mines.module
 import com.mines.mapper
 import com.mines.settings.Setting
+import com.mines.users.User
+import com.mines.users.authUser
 import com.mines.users.createUser
 import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Get
@@ -16,6 +18,7 @@ import org.junit.Assert
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.mindrot.jbcrypt.BCrypt
 
 @DisplayName("Games routes")
 class GamesTest : ApplicationTest() {
@@ -31,12 +34,18 @@ class GamesTest : ApplicationTest() {
                         height = 3
                         bombsCount = 1
                     }
+
+                    User.new {
+                        email = "user@example.com"
+                        password = BCrypt.hashpw("qwerty", BCrypt.gensalt())
+                    }
                 }
 
-                val createCall = createUser("user@example.com", "qwerty")
-                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+                val authCall = authUser("user@example.com", "qwerty")
+                val authResponse: Map<String, String> = mapper.readValue(authCall.response.content!!)
 
-                val token = createResponse["token"].toString()
+                val token = authResponse["token"].toString()
+
                 val call = createGame(token)
                 val game: GameData = mapper.readValue(call.response.content!!)
 
@@ -71,12 +80,18 @@ class GamesTest : ApplicationTest() {
                         height = 3
                         bombsCount = 1
                     }
+
+                    User.new {
+                        email = "user@example.com"
+                        password = BCrypt.hashpw("qwerty", BCrypt.gensalt())
+                    }
                 }
 
-                val createCall = createUser("user@example.com", "qwerty")
-                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+                val authCall = authUser("user@example.com", "qwerty")
+                val authResponse: Map<String, String> = mapper.readValue(authCall.response.content!!)
 
-                val token = createResponse["token"].toString()
+                val token = authResponse["token"].toString()
+
                 createGame(token)
 
                 val response = handleRequest(Get, "/api/v1/games/1") {
@@ -103,10 +118,23 @@ class GamesTest : ApplicationTest() {
         @Test
         fun `when game does not exist`() {
             withTestApplication(moduleFunction = { module(testing = true) }) {
-                val createCall = createUser("user@example.com", "qwerty")
-                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+                transaction {
+                    Setting.new {
+                        width = 2
+                        height = 3
+                        bombsCount = 1
+                    }
 
-                val token = createResponse["token"].toString()
+                    User.new {
+                        email = "user@example.com"
+                        password = BCrypt.hashpw("qwerty", BCrypt.gensalt())
+                    }
+                }
+
+                val authCall = authUser("user@example.com", "qwerty")
+                val authResponse: Map<String, String> = mapper.readValue(authCall.response.content!!)
+
+                val token = authResponse["token"].toString()
 
                 val call = handleRequest(Get, "/api/v1/games/1") {
                     addHeader(HttpHeaders.Authorization, "Bearer $token")
@@ -133,12 +161,17 @@ class GamesTest : ApplicationTest() {
                         height = 3
                         bombsCount = 1
                     }
+
+                    User.new {
+                        email = "user@example.com"
+                        password = BCrypt.hashpw("qwerty", BCrypt.gensalt())
+                    }
                 }
 
-                val createCall = createUser("user@example.com", "qwerty")
-                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+                val authCall = authUser("user@example.com", "qwerty")
+                val authResponse: Map<String, String> = mapper.readValue(authCall.response.content!!)
 
-                val token = createResponse["token"].toString()
+                val token = authResponse["token"].toString()
 
                 createGame(token)
 
@@ -189,6 +222,40 @@ class GamesTest : ApplicationTest() {
     @DisplayName("Mark Cell")
     @Nested
     inner class MarkCell {
+        @Test
+        fun `when user is not owner`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                transaction {
+                    Setting.new {
+                        width = 2
+                        height = 3
+                        bombsCount = 1
+                    }
+                }
+
+                val createOwner = createUser("user@example.com", "qwerty")
+                val createOwnerResponse: Map<String, String> = mapper.readValue(createOwner.response.content!!)
+
+                val ownerToken = createOwnerResponse["token"].toString()
+
+                val game: GameData = mapper.readValue(createGame(ownerToken).response.content!!)
+                val gameId = game.id
+
+                val otherUser = createUser("other@example.com", "qwerty")
+                val otherUserResponse: Map<String, String> = mapper.readValue(otherUser.response.content!!)
+
+                val otherUserToken = otherUserResponse["token"].toString()
+
+                val call = markCell(gameId, 0, 2, otherUserToken)
+
+                Assert.assertEquals(HttpStatusCode.NotFound, call.response.status())
+                Assert.assertEquals(
+                    mapOf("message" to "Resource not found", "errorCode" to 404),
+                    mapper.readValue(call.response.content!!)
+                )
+            }
+        }
+
         @Test
         fun `when cell is closed`() {
             withTestApplication(moduleFunction = { module(testing = true) }) {
