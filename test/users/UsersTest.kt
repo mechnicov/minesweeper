@@ -2,6 +2,7 @@ package com.mines.users
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mines.ApplicationTest
+import com.mines.games.GameData
 import com.mines.module
 import com.mines.mapper
 import io.ktor.http.*
@@ -87,6 +88,27 @@ class UsersTest : ApplicationTest() {
             }
         }
     }
+
+    @DisplayName("Get current user")
+    @Nested
+    inner class GetCurrentUser {
+        @Test
+        fun `successfully`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+
+                val token = createResponse["token"]
+
+                val call = getCurrentUser(token.toString())
+                Assert.assertEquals(HttpStatusCode.OK, call.response.status())
+                Assert.assertEquals(
+                    mapOf("id" to 1, "email" to "user@example.com", "isAdmin" to false, "games" to emptyList<GameData>(), "password" to "[FILTERED]"),
+                    mapper.readValue(call.response.content!!)
+                )
+            }
+        }
+    }
 }
 
 fun TestApplicationEngine.createUser(email: String, password: String): TestApplicationCall {
@@ -102,5 +124,11 @@ fun TestApplicationEngine.authUser(email: String, password: String): TestApplica
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
 
         setBody(mapper.writeValueAsString(mapOf("email" to email, "password" to password)))
+    }
+}
+
+fun TestApplicationEngine.getCurrentUser(token: String): TestApplicationCall {
+    return handleRequest(HttpMethod.Get, "/api/v1/auth") {
+        addHeader(HttpHeaders.Authorization, "Bearer $token")
     }
 }
