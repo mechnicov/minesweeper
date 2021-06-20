@@ -6,8 +6,8 @@ const Header = () => {
     <Navbar style={{ backgroundColor: '#c5b3e6' }} expand='lg'>
       <Navbar.Collapse id='basic-navbar-nav'>
         <Nav className='me-auto'>
-          <Nav.Link href='#'>Новая игра</Nav.Link>
-          <Nav.Link href='#'>Список игр</Nav.Link>
+          <Nav.Link href='/sign_in'>Войти</Nav.Link>
+          <Nav.Link href='/sign_up'>Зарегистрироваться</Nav.Link>
         </Nav>
 
         <Nav>
