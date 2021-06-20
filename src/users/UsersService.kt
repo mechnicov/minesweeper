@@ -9,7 +9,7 @@ import org.mindrot.jbcrypt.BCrypt
 
 interface UsersService {
     suspend fun create(userData: UserData): UserData
-    suspend fun auth(login: Login)
+    suspend fun auth(login: Login): Login
     suspend fun findByEmail(email: String): UserData
 }
 
@@ -31,14 +31,17 @@ class UsersServiceDB : UsersService {
         }
     }
 
-    override suspend fun auth(login: Login) {
-        transaction {
+    override suspend fun auth(login: Login): Login {
+        return transaction {
             addLogger(StdOutSqlLogger)
 
             val user =
                 Users.select { Users.email eq login.email }.firstOrNull() ?: throw UnprocessableEntityError("Bad credentials")
 
             if (!BCrypt.checkpw(login.password, user[Users.password])) throw UnprocessableEntityError("Bad credentials")
+
+            login.isAdmin = user[Users.isAdmin]
+            login
         }
     }
 

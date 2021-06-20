@@ -13,9 +13,9 @@ import io.ktor.routing.*
 fun Route.authenticationRouter(usersService: UsersService) {
     route("/api/v1/auth") {
         post {
-            val login = call.receive<Login>()
+            var login = call.receive<Login>()
 
-            usersService.auth(login)
+            login = usersService.auth(login)
 
             val token = JWTConfig.generateToken(login)
 

@@ -19,6 +19,7 @@ object JWTConfig {
         withIssuer(issuer).
         withClaim("email", user.email).
         withClaim("password", user.password).
+        withClaim("isAdmin", user.isAdmin).
         withExpiresAt(getExpiration()).
         sign(algorithm)
 

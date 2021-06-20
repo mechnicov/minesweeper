@@ -48,9 +48,10 @@ fun Application.module(testing: Boolean = false) {
             validate {
                 val name = it.payload.getClaim("email").asString()
                 val password = it.payload.getClaim("password").asString()
+                val isAdmin = it.payload.getClaim("isAdmin").asBoolean()
 
                 if (name != null && password != null) {
-                    Login(name, password)
+                    Login(name, password, isAdmin)
                 } else {
                     null
                 }
