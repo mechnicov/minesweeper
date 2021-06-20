@@ -5,11 +5,11 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.mines.settings.Setting
 import com.mines.users.User
+import com.mines.users.Users
 import io.ktor.features.*
-import java.util.*
 
 interface GamesService {
-    suspend fun create(): GameData
+    suspend fun create(userEmail: String): GameData
     suspend fun findById(id: Int): GameData
     suspend fun all(): List<GameData>
     suspend fun markCell(gameId: Int, x: Int, y: Int): GameData
@@ -17,13 +17,13 @@ interface GamesService {
 }
 
 class GamesServiceDB : GamesService {
-    override suspend fun create(): GameData {
+    override suspend fun create(userEmail: String): GameData {
         return transaction {
             addLogger(StdOutSqlLogger)
 
             val settings = Setting.all().limit(1).first()
 
-            val gameUser = User.new { email = "${UUID.randomUUID()}@example.com" } // TODO: authenticated user
+            val gameUser = User.find { Users.email eq userEmail }.first()
 
             val newGame = Game.new {
                 width = settings.width

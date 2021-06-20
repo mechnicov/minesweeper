@@ -6,6 +6,7 @@ import com.mines.cells.CellStatus
 import com.mines.module
 import com.mines.mapper
 import com.mines.settings.Setting
+import com.mines.users.createUser
 import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.server.testing.*
@@ -32,7 +33,11 @@ class GamesTest : ApplicationTest() {
                     }
                 }
 
-                val call = createGame()
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+
+                val token = createResponse["token"].toString()
+                val call = createGame(token)
                 val game: GameData = mapper.readValue(call.response.content!!)
 
                 Assert.assertEquals(HttpStatusCode.OK, call.response.status())
@@ -68,9 +73,15 @@ class GamesTest : ApplicationTest() {
                     }
                 }
 
-                createGame()
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
 
-                val response = handleRequest(Get, "/api/v1/games/1").response.content!!
+                val token = createResponse["token"].toString()
+                createGame(token)
+
+                val response = handleRequest(Get, "/api/v1/games/1") {
+                    addHeader(HttpHeaders.Authorization, "Bearer $token")
+                }.response.content!!
                 val game: GameData = mapper.readValue(response)
 
                 Assert.assertEquals(game.id, 1)
@@ -92,7 +103,14 @@ class GamesTest : ApplicationTest() {
         @Test
         fun `when game does not exist`() {
             withTestApplication(moduleFunction = { module(testing = true) }) {
-                val call = handleRequest(Get, "/api/v1/games/1")
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+
+                val token = createResponse["token"].toString()
+
+                val call = handleRequest(Get, "/api/v1/games/1") {
+                    addHeader(HttpHeaders.Authorization, "Bearer $token")
+                }
 
                 Assert.assertEquals(HttpStatusCode.NotFound, call.response.status())
                 Assert.assertEquals(
@@ -117,9 +135,16 @@ class GamesTest : ApplicationTest() {
                     }
                 }
 
-                createGame()
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
 
-                val response = handleRequest(Get, "/api/v1/games").response.content!!
+                val token = createResponse["token"].toString()
+
+                createGame(token)
+
+                val response = handleRequest(Get, "/api/v1/games"){
+                    addHeader(HttpHeaders.Authorization, "Bearer $token")
+                }.response.content!!
                 val games: List<GameData> = mapper.readValue(response)
                 val game = games.last()
 
@@ -144,7 +169,14 @@ class GamesTest : ApplicationTest() {
         @Test
         fun `when games do not exist`() {
             withTestApplication(moduleFunction = { module(testing = true) }) {
-                val call = handleRequest(Get, "/api/v1/games")
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+
+                val token = createResponse["token"].toString()
+
+                val call = handleRequest(Get, "/api/v1/games") {
+                    addHeader(HttpHeaders.Authorization, "Bearer $token")
+                }
 
                 Assert.assertEquals(
                     emptyList<GameData>(),
@@ -168,10 +200,15 @@ class GamesTest : ApplicationTest() {
                     }
                 }
 
-                val game: GameData = mapper.readValue(createGame().response.content!!)
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+
+                val token = createResponse["token"].toString()
+
+                val game: GameData = mapper.readValue(createGame(token).response.content!!)
                 val gameId = game.id
 
-                val call = markCell(gameId, 0, 2)
+                val call = markCell(gameId, 0, 2, token)
                 val updatedGame: GameData = mapper.readValue(call.response.content!!)
 
                 Assert.assertEquals(updatedGame.id, gameId)
@@ -196,11 +233,16 @@ class GamesTest : ApplicationTest() {
                     }
                 }
 
-                val game: GameData = mapper.readValue(createGame().response.content!!)
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+
+                val token = createResponse["token"].toString()
+
+                val game: GameData = mapper.readValue(createGame(token).response.content!!)
                 val gameId = game.id
 
-                markCell(gameId, 0, 2)
-                val call = markCell(gameId, 0, 2)
+                markCell(gameId, 0, 2, token)
+                val call = markCell(gameId, 0, 2, token)
 
                 val updatedGame: GameData = mapper.readValue(call.response.content!!)
 
@@ -216,15 +258,17 @@ class GamesTest : ApplicationTest() {
     }
 }
 
-fun TestApplicationEngine.createGame(): TestApplicationCall {
+fun TestApplicationEngine.createGame(token: String): TestApplicationCall {
     return handleRequest(HttpMethod.Post, "/api/v1/games") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        addHeader(HttpHeaders.Authorization, "Bearer $token")
     }
 }
 
-fun TestApplicationEngine.markCell(gameId: Int, x: Int, y: Int): TestApplicationCall {
+fun TestApplicationEngine.markCell(gameId: Int, x: Int, y: Int, token: String): TestApplicationCall {
     return handleRequest(HttpMethod.Post, "/api/v1/games/$gameId/mark") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        addHeader(HttpHeaders.Authorization, "Bearer $token")
         setBody(mapper.writeValueAsString(mapOf("x" to x, "y" to y)))
     }
 }

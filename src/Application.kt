@@ -65,10 +65,13 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
-        gamesRouter(GamesServiceDB())
-        settingsRouter(SettingsServiceDB())
         usersRouter(usersService)
         authenticationRouter(usersService)
+
+        authenticate {
+            gamesRouter(GamesServiceDB())
+            settingsRouter(SettingsServiceDB())
+        }
 
         install(StatusPages) {
             status(HttpStatusCode.Unauthorized) {

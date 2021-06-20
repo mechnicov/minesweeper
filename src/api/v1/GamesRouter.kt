@@ -1,6 +1,7 @@
 package com.mines.api.v1
 
 import com.mines.games.GamesServiceDB
+import com.mines.jwt.login
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.request.*
@@ -10,7 +11,7 @@ import io.ktor.routing.*
 fun Route.gamesRouter(gamesService: GamesServiceDB) {
     route("/api/v1/games") {
         post {
-            val game = gamesService.create()
+            val game = gamesService.create(call.login?.email.toString())
             call.respond(game)
         }
 
