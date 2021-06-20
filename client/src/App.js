@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import './App.scss'
 
 import Header from './components/layout/Header'
+import Register from './components/auth/Register'
 import store from './store'
 
 const App = () => {
@@ -18,7 +19,7 @@ const App = () => {
               <Switch>
                 <Route exact path='/'>Главная</Route>
                 <Route exact path='/sign_in'>Войти</Route>
-                <Route exact path='/sign_up'>Зарегистрироваться</Route>
+                <Route exact path='/sign_up' component={Register}/>
                 <Route exact path='/games'>Список игр</Route>
                 <Route exact path='/games/:id'>Игра</Route>
                 <Route exact path='/settings'>Настройки</Route>
