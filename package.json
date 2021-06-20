@@ -1,0 +1,14 @@
+{
+  "name": "minesweeper",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "cinstall": "yarn --cwd client install",
+    "cadd": "yarn --cwd client add",
+    "cremove": "yarn --cwd client remove",
+    "start": "yarn --cwd client react-scripts start",
+    "build": "yarn --cwd client react-scripts build",
+    "test": "yarn --cwd client react-scripts test",
+    "eject": "yarn --cwd client react-scripts eject"
+  }
+}
