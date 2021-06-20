@@ -13,9 +13,14 @@ import com.mines.api.v1.gamesRouter
 import com.mines.api.v1.settingsRouter
 import com.mines.api.v1.usersRouter
 import com.mines.games.GamesServiceDB
+import com.mines.jwt.JWTConfig
+import com.mines.jwt.Login
 import io.ktor.jackson.*
 import com.mines.settings.SettingsServiceDB
 import com.mines.users.UsersServiceDB
+import io.ktor.auth.*
+import io.ktor.auth.jwt.*
+import io.github.cdimascio.dotenv.dotenv
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -32,6 +37,25 @@ fun Application.module(testing: Boolean = false) {
     install(CallLogging) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/") }
+    }
+
+    install(Authentication) {
+        jwt {
+            realm = dotenv["JWT_REALM"]
+
+            verifier(JWTConfig.verifier)
+
+            validate {
+                val name = it.payload.getClaim("email").asString()
+                val password = it.payload.getClaim("password").asString()
+
+                if (name != null && password != null) {
+                    Login(name, password)
+                } else {
+                    null
+                }
+            }
+        }
     }
 
     install(ContentNegotiation) {
@@ -66,3 +90,5 @@ fun Application.module(testing: Boolean = false) {
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()
 data class ErrorMessage(val message: String, val errorCode: Int)
+
+val dotenv = dotenv()

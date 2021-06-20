@@ -1,8 +1,9 @@
 package com.mines.jwt
 
-import io.github.cdimascio.dotenv.dotenv
 import com.auth0.jwt.JWT
+import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.mines.dotenv
 import java.util.Date
 
 object JWTConfig {
@@ -21,7 +22,12 @@ object JWTConfig {
         withExpiresAt(getExpiration()).
         sign(algorithm)
 
+    val verifier: JWTVerifier =
+        JWT.
+        require(algorithm).
+        withIssuer(issuer).
+        build()
+
+
     private fun getExpiration() = Date(System.currentTimeMillis() + validityInMs)
 }
-
-var dotenv = dotenv()
