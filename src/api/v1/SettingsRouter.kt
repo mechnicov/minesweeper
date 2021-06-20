@@ -1,5 +1,6 @@
 package com.mines.api.v1
 
+import com.mines.jwt.checkIsAdmin
 import com.mines.settings.SettingsData
 import com.mines.settings.SettingsService
 import com.mines.validate
@@ -14,11 +15,15 @@ fun Route.settingsRouter(settingsService: SettingsService) {
         val validator = Validation.buildDefaultValidatorFactory().validator
 
         get {
+            call.checkIsAdmin()
+
             val settings = settingsService.get()
             call.respond(settings)
         }
 
         post {
+            call.checkIsAdmin()
+
             var settings = call.receive<SettingsData>()
             settings.validate(validator)
             settings = settingsService.create(settings.width, settings.height, settings.bombsCount)
@@ -26,6 +31,8 @@ fun Route.settingsRouter(settingsService: SettingsService) {
         }
 
         put {
+            call.checkIsAdmin()
+
             var settings = call.receive<SettingsData>()
             settings.validate(validator)
             settings = settingsService.update(settings.width, settings.height, settings.bombsCount)
