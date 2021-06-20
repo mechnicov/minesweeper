@@ -78,12 +78,12 @@ fun Application.module(testing: Boolean = false) {
                 call.respond(HttpStatusCode.Unauthorized, ErrorMessage("Only for registered users", HttpStatusCode.Unauthorized.value))
             }
 
-            status(HttpStatusCode.Forbidden) {
-                call.respond(HttpStatusCode.Forbidden, ErrorMessage("Forbidden", HttpStatusCode.Forbidden.value))
+            exception<RuntimeException> {
+                call.respond(HttpStatusCode.InternalServerError, ErrorMessage("Something went wrong", HttpStatusCode.InternalServerError.value))
             }
 
-            status(HttpStatusCode.InternalServerError) {
-                call.respond(HttpStatusCode.InternalServerError, ErrorMessage("Something went wrong", HttpStatusCode.InternalServerError.value))
+            exception<ForbiddenError> { e->
+                call.respond(HttpStatusCode.Forbidden, ErrorMessage(e.message.toString(), HttpStatusCode.Forbidden.value))
             }
 
             exception<NotFoundException> {
@@ -98,5 +98,6 @@ fun Application.module(testing: Boolean = false) {
 }
 
 data class ErrorMessage(val message: String, val errorCode: Int)
+class ForbiddenError(message: String = "You do not have permissions") : BadRequestException(message)
 
 val dotenv = dotenv()
