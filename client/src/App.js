@@ -1,5 +1,6 @@
-import './App.css'
 import { Container, Row, Col } from 'react-bootstrap'
+
+import './App.scss'
 
 const App = () => {
   return (
