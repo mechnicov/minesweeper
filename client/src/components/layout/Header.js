@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Navbar, Nav } from 'react-bootstrap'
 
-const Header = ({ isLoggedIn }) => {
+import { logout } from '../../actions/authActions'
+
+const Header = ({ logout, isLoggedIn }) => {
   const leftGuestLinks = (
     <Fragment>
       <Nav.Link href='/sign_in'>Войти</Nav.Link>
@@ -20,7 +22,7 @@ const Header = ({ isLoggedIn }) => {
 
   const logoutLink = (
     <Nav>
-      <Nav.Link href='#'>Выход</Nav.Link>
+      <Nav.Link href='#!' onClick={logout}>Выход</Nav.Link>
     </Nav>
   )
 
@@ -38,6 +40,7 @@ const Header = ({ isLoggedIn }) => {
 }
 
 Header.propTypes = {
+  logout: PropTypes.func.isRequired,
   isLoggedIn: PropTypes.bool,
 }
 
@@ -45,4 +48,4 @@ const mapStateToProps = state => ({
   isLoggedIn: state.authReducer.isLoggedIn,
 })
 
-export default connect(mapStateToProps, null)(Header)
+export default connect(mapStateToProps, { logout })(Header)
