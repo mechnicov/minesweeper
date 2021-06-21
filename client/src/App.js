@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import './App.scss'
 
 import Header from './components/layout/Header'
+import Alerts from './components/layout/Alerts'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import store from './store'
@@ -15,6 +16,7 @@ const App = () => {
       <Router>
         <Header/>
         <Container>
+          <Alerts/>
           <Row className='mt-4'>
             <Col>
               <Switch>
