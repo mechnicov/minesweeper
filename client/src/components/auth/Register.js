@@ -66,7 +66,7 @@ const Register = ({ register, isLoggedIn }) => {
 
 Register.propTypes = {
   register: PropTypes.func.isRequired,
-  isLoggedIn: PropTypes.bool,
+  isLoggedIn: PropTypes.bool.isRequired,
 }
 
 const mapStateToProps = state => ({
