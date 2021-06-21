@@ -1,22 +1,48 @@
-import React from 'react'
+import React, { Fragment } from 'react'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import { Navbar, Nav } from 'react-bootstrap'
 
-const Header = () => {
+const Header = ({ isLoggedIn }) => {
+  const leftGuestLinks = (
+    <Fragment>
+      <Nav.Link href='/sign_in'>Войти</Nav.Link>
+      <Nav.Link href='/sign_up'>Зарегистрироваться</Nav.Link>
+    </Fragment>
+  )
+
+  const leftUserLinks = (
+    <Fragment>
+      <Nav.Link href='#'>Новая игра</Nav.Link>
+      <Nav.Link href='/games'>Список игр</Nav.Link>
+    </Fragment>
+  )
+
+  const logoutLink = (
+    <Nav>
+      <Nav.Link href='#'>Выход</Nav.Link>
+    </Nav>
+  )
+
   return (
     <Navbar style={{ backgroundColor: '#c5b3e6' }} expand='lg'>
       <Navbar.Collapse id='basic-navbar-nav'>
         <Nav className='me-auto'>
-          <Nav.Link href='/sign_in'>Войти</Nav.Link>
-          <Nav.Link href='/sign_up'>Зарегистрироваться</Nav.Link>
+          {isLoggedIn ? leftUserLinks : leftGuestLinks}
         </Nav>
 
-        <Nav>
-          <Nav.Link href='#'>Настройки</Nav.Link>
-          <Nav.Link href='#'>Выход</Nav.Link>
-        </Nav>
+        {isLoggedIn && logoutLink}
       </Navbar.Collapse>
     </Navbar>
   )
 }
 
-export default Header
+Header.propTypes = {
+  isLoggedIn: PropTypes.bool,
+}
+
+const mapStateToProps = state => ({
+  isLoggedIn: state.authReducer.isLoggedIn,
+})
+
+export default connect(mapStateToProps, null)(Header)
