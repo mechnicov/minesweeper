@@ -7,6 +7,7 @@ import {
 } from './types'
 
 import { doRegister, doLogin, doLogout } from '../utils/authServices'
+import { setAlert } from './alertActions'
 
 export const register = (email, password) => dispatch => {
   return doRegister(email, password).
@@ -15,18 +16,22 @@ export const register = (email, password) => dispatch => {
         type: REGISTER_SUCCESS,
       })
 
+      dispatch(setAlert('Welcome!'))
+
       return Promise.resolve()
     },
     error => {
-      const message = (error.response && error.response.data && error.response.data.message) ||
-                      error.message ||
-                      error.toString()
-
-      alert(message)
+      const msg = (error.response && error.response.data && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
 
       dispatch({
         type: REGISTER_FAIL,
       })
+
+      dispatch(setAlert(msg))
+
+      return Promise.resolve()
     }
   )
 }
@@ -39,18 +44,22 @@ export const login = (username, password) => dispatch => {
         payload: { user: data },
       })
 
+      dispatch(setAlert('Welcome!'))
+
       return Promise.resolve()
     },
     error => {
-      const message = (error.response && error.response.data && error.response.data.message) ||
-                      error.message ||
-                      error.toString()
-
-      alert(message)
+      const msg = (error.response && error.response.data && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
 
       dispatch({
         type: LOGIN_FAIL,
       })
+
+      dispatch(setAlert(msg))
+
+      return Promise.resolve()
     }
   )
 }
@@ -61,4 +70,6 @@ export const logout = () => dispatch => {
   dispatch({
     type: LOGOUT,
   })
+
+  dispatch(setAlert('See you soon'))
 }
