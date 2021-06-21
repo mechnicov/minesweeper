@@ -4,9 +4,11 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT,
+  USER_LOAD,
+  USER_NOT_LOAD,
 } from './types'
 
-import { doRegister, doLogin, doLogout } from '../utils/authServices'
+import { doRegister, doLogin, doLogout, doLoadUser } from '../utils/authServices'
 import { setAlert } from './alertActions'
 
 export const register = (email, password) => dispatch => {
@@ -36,12 +38,12 @@ export const register = (email, password) => dispatch => {
   )
 }
 
-export const login = (username, password) => dispatch => {
-  return doLogin(username, password).
+export const login = (email, password) => dispatch => {
+  return doLogin(email, password).
     then(data => {
       dispatch({
         type: LOGIN_SUCCESS,
-        payload: { user: data },
+        payload: { token: data },
       })
 
       dispatch(setAlert('Welcome!'))
@@ -72,4 +74,30 @@ export const logout = () => dispatch => {
   })
 
   dispatch(setAlert('See you soon'))
+}
+
+export const loadUser = () => dispatch => {
+  return doLoadUser().
+    then(data => {
+      dispatch({
+        type: USER_LOAD,
+        payload: data.data,
+      })
+
+      return Promise.resolve()
+    },
+    error => {
+      const msg = (error.response && error.response.data && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
+
+      dispatch({
+        type: USER_NOT_LOAD,
+      })
+
+      dispatch(setAlert(msg))
+
+      return Promise.resolve()
+    }
+  )
 }
