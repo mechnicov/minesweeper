@@ -8,6 +8,7 @@ import Header from './components/layout/Header'
 import Alerts from './components/layout/Alerts'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
+import Games from './components/games/Games'
 import store from './store'
 
 const App = () => {
@@ -23,7 +24,7 @@ const App = () => {
                 <Route exact path='/'>Главная</Route>
                 <Route exact path='/sign_in' component={Login}/>
                 <Route exact path='/sign_up' component={Register}/>
-                <Route exact path='/games'>Список игр</Route>
+                <Route exact path='/games' component={Games}/>
                 <Route exact path='/games/:id'>Игра</Route>
                 <Route exact path='/settings'>Настройки</Route>
                 <Route path='*'>404</Route>
