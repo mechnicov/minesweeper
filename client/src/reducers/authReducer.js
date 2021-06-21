@@ -4,11 +4,14 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT,
+  USER_LOAD,
+  USER_NOT_LOAD,
 } from '../actions/types'
 
-const user = JSON.parse(localStorage.getItem('minesweeper'))
+const token = JSON.parse(localStorage.getItem('minesweeper'))
 
-const initialState = user ? { isLoggedIn: true, user } : { isLoggedIn: false, user: null }
+const initialState =
+  token ? { isLoggedIn: true, token, user: {} } : { isLoggedIn: false, token: null, user: null }
 
 export default (state = initialState, action) => {
   const { type, payload } = action
@@ -28,19 +31,32 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isLoggedIn: true,
-        user: payload.user,
+        token: payload.token,
       }
     case LOGIN_FAIL:
       return {
         ...state,
         isLoggedIn: false,
-        user: null,
+        token: null,
       }
     case LOGOUT:
       return {
         ...state,
         isLoggedIn: false,
+        token: null,
+      }
+    case USER_LOAD:
+      return {
+        ...state,
+        isLoggedIn: true,
+        user: payload,
+      }
+    case USER_NOT_LOAD:
+      return {
+        ...state,
+        isLoggedIn: false,
         user: null,
+        token: null,
       }
     default:
       return state
