@@ -16,6 +16,17 @@ export const register = (email, password) => dispatch => {
       })
 
       return Promise.resolve()
+    },
+    error => {
+      const message = (error.response && error.response.data && error.response.data.message) ||
+                      error.message ||
+                      error.toString()
+
+      alert(message)
+
+      dispatch({
+        type: REGISTER_FAIL,
+      })
     }
   )
 }
@@ -29,6 +40,17 @@ export const login = (username, password) => dispatch => {
       })
 
       return Promise.resolve()
+    },
+    error => {
+      const message = (error.response && error.response.data && error.response.data.message) ||
+                      error.message ||
+                      error.toString()
+
+      alert(message)
+
+      dispatch({
+        type: LOGIN_FAIL,
+      })
     }
   )
 }
