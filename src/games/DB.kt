@@ -33,7 +33,7 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
             this.height,
             this.status.value,
             this.user.id.value,
-            this.cells.map { it.data() }.toSet()
+            this.cells.map { it.data() }
         )
     }
 }
@@ -44,8 +44,12 @@ data class GameData(
     val height: Int,
     val status: String,
     val userId: Int,
-    val cells: Set<CellData>
-)
+    var cells: List<CellData>
+) {
+    init {
+       cells = cells.sortedWith(compareBy({ it.y }, { it.x }))
+    }
+}
 
 enum class GameStatus(val value: String) {
     IN_PROGRESS("in_progress"),
