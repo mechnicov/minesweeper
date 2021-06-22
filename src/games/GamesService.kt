@@ -50,7 +50,7 @@ class GamesServiceDB : GamesService {
 
     override suspend fun all(userEmail: String): List<GameData> {
         return transaction {
-            User.find { Users.email eq userEmail }.first().games.map { it.data() }
+            User.find { Users.email eq userEmail }.first().games.sortedBy { it.id }.map { it.data() }
         }
     }
 

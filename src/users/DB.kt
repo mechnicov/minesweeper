@@ -28,7 +28,7 @@ class User(id: EntityID<Int>) : IntEntity(id) {
             this.email,
             this.isAdmin,
             "[FILTERED]",
-            this.games.map { it.data() }.toSet()
+            this.games.asSequence().sortedBy { it.id }.map { it.data() }.toSet()
         )
 }
 
