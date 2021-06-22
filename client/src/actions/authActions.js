@@ -14,58 +14,52 @@ import { doRegister, doLogin, doLogout, doLoadUser } from '../utils/authServices
 import { setAlert } from './alertActions'
 
 export const register = (email, password) => dispatch => {
-  return doRegister(email, password).
-    then(response => {
-      dispatch({
-        type: REGISTER_SUCCESS,
-      })
+  return doRegister(email, password).then(response => {
+    dispatch({
+      type: REGISTER_SUCCESS,
+    })
 
-      dispatch(setAlert('Welcome!'))
+    dispatch(setAlert('Welcome!'))
 
-      return Promise.resolve()
-    },
-    error => {
-      const msg = (error.response && error.response.data && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
+    return Promise.resolve()
+  }, error => {
+    const msg = (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch({
-        type: REGISTER_FAIL,
-      })
+    dispatch({
+      type: REGISTER_FAIL,
+    })
 
-      dispatch(setAlert(msg))
+    dispatch(setAlert(msg))
 
-      return Promise.resolve()
-    }
-  )
+    return Promise.resolve()
+  })
 }
 
 export const login = (email, password) => dispatch => {
-  return doLogin(email, password).
-    then(data => {
-      dispatch({
-        type: LOGIN_SUCCESS,
-        payload: { token: data },
-      })
+  return doLogin(email, password).then(data => {
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: { token: data },
+    })
 
-      dispatch(setAlert('Welcome!'))
+    dispatch(setAlert('Welcome!'))
 
-      return Promise.resolve()
-    },
-    error => {
-      const msg = (error.response && error.response.data && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
+    return Promise.resolve()
+  }, error => {
+    const msg = (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch({
-        type: LOGIN_FAIL,
-      })
+    dispatch({
+      type: LOGIN_FAIL,
+    })
 
-      dispatch(setAlert(msg))
+    dispatch(setAlert(msg))
 
-      return Promise.resolve()
-    }
-  )
+    return Promise.resolve()
+  })
 }
 
 export const logout = () => dispatch => {
@@ -81,29 +75,26 @@ export const logout = () => dispatch => {
 }
 
 export const loadUser = () => dispatch => {
-  return doLoadUser().
-    then(data => {
-      dispatch({
-        type: USER_LOAD,
-        payload: data.data,
-      })
+  return doLoadUser().then(data => {
+    dispatch({
+      type: USER_LOAD,
+      payload: data.data,
+    })
 
-      return Promise.resolve()
-    },
-    error => {
-      const msg = (error.response && error.response.data && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
+    return Promise.resolve()
+  }, error => {
+    const msg = (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch({
-        type: USER_NOT_LOAD,
-      })
+    dispatch({
+      type: USER_NOT_LOAD,
+    })
 
-      dispatch(setAlert(msg))
+    dispatch(setAlert(msg))
 
-      history.push('/')
+    history.push('/')
 
-      return Promise.resolve()
-    }
-  )
+    return Promise.resolve()
+  })
 }

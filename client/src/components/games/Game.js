@@ -13,6 +13,8 @@ const Game = ({ getOneGame, game }) => {
     if (game === null) {
       getOneGame(gameId)
     }
+
+    // eslint-disable-next-line
   }, [game])
 
   return (

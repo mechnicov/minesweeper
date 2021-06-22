@@ -11,100 +11,88 @@ import { doStartGame, doGetOneGame, doMarkCell, doOpenCell } from '../utils/game
 import { setAlert } from './alertActions'
 
 export const startGame = () => dispatch => {
-  return doStartGame().
-    then(response => {
-      const game = response.data
+  return doStartGame().then(response => {
+    const game = response.data
 
-      dispatch({
-        type: START_GAME,
-        payload: game
-      })
+    dispatch({
+      type: START_GAME,
+      payload: game
+    })
 
-      history.push(`/games/${game.id}`)
+    history.push(`/games/${game.id}`)
 
-      return Promise.resolve()
-    },
-    error => {
-      const msg = (error.response && error.response.data && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
+    return Promise.resolve()
+  }, error => {
+    const msg = (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch(setAlert(msg))
+    dispatch(setAlert(msg))
 
-      history.push('/')
+    history.push('/')
 
-      return Promise.resolve()
-    }
-  )
+    return Promise.resolve()
+  })
 }
 
 export const getOneGame = gameId => dispatch => {
-  return doGetOneGame(gameId).
-    then(response => {
-      dispatch({
-        type: GET_GAME,
-        payload: response.data
-      })
-      return Promise.resolve()
-    },
-    error => {
-      const msg = (error.response && error.response.data && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
+  return doGetOneGame(gameId).then(response => {
+    dispatch({
+      type: GET_GAME,
+      payload: response.data
+    })
+    return Promise.resolve()
+  }, error => {
+    const msg = (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch(setAlert(msg))
+    dispatch(setAlert(msg))
 
-      history.push('/')
+    history.push('/')
 
-      return Promise.resolve()
-    }
-  )
+    return Promise.resolve()
+  })
 }
 
 export const markCell = (gameId, x, y) => dispatch => {
-  return doMarkCell(gameId, x, y).
-    then(response => {
-      dispatch({
-        type: MARK_CELL,
-        payload: response.data
-      })
+  return doMarkCell(gameId, x, y).then(response => {
+    dispatch({
+      type: MARK_CELL,
+      payload: response.data
+    })
 
-      return Promise.resolve()
-    },
-    error => {
-      const msg = (error.response && error.response.data && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
+    return Promise.resolve()
+  }, error => {
+    const msg = (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch(setAlert(msg))
+    dispatch(setAlert(msg))
 
-      history.push('/')
+    history.push('/')
 
-      return Promise.resolve()
-    }
-  )
+    return Promise.resolve()
+  })
 }
 
 export const openCell = (gameId, x, y) => dispatch => {
-  return doOpenCell(gameId, x, y).
-    then(response => {
-      dispatch({
-        type: OPEN_CELL,
-        payload: response.data
-      })
+  return doOpenCell(gameId, x, y).then(response => {
+    dispatch({
+      type: OPEN_CELL,
+      payload: response.data
+    })
 
-      return Promise.resolve()
-    },
-    error => {
-      const msg = (error.response && error.response.data && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
+    return Promise.resolve()
+  }, error => {
+    const msg = (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch(setAlert(msg))
+    dispatch(setAlert(msg))
 
-      history.push('/')
+    history.push('/')
 
-      return Promise.resolve()
-    }
-  )
+    return Promise.resolve()
+  })
 }

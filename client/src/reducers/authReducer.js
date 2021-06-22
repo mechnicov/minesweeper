@@ -13,7 +13,7 @@ const token = JSON.parse(localStorage.getItem('minesweeper'))
 const initialState =
   token ? { isLoggedIn: true, token, user: {} } : { isLoggedIn: false, token: null, user: null }
 
-export default (state = initialState, action) => {
+const authReducer = (state = initialState, action) => {
   const { type, payload } = action
 
   switch (type) {
@@ -62,3 +62,5 @@ export default (state = initialState, action) => {
       return state
   }
 }
+
+export default authReducer

@@ -5,7 +5,7 @@ import {
 
 const initialState = { alerts: [] }
 
-export default (state = initialState, action) => {
+const alertReducer = (state = initialState, action) => {
   switch(action.type) {
     case SET_ALERT:
       return { alerts: [...state.alerts, action.payload] }
@@ -15,3 +15,5 @@ export default (state = initialState, action) => {
       return state
   }
 }
+
+export default alertReducer
