@@ -13,3 +13,6 @@ export const START_GAME = 'START_GAME'
 export const GET_GAME = 'GET_GAME'
 export const OPEN_CELL = 'OPEN_CELL'
 export const MARK_CELL = 'MARK_CELL'
+
+export const GET_SETTINGS = 'GET_SETTINGS'
+export const UPDATE_SETTINGS = 'UPDATE_SETTINGS'

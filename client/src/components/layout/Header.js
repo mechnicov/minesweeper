@@ -25,7 +25,7 @@ const Header = ({ logout, startGame, isLoggedIn, user }) => {
     <Fragment>
       <Nav>
         <Nav.Link href='#!'>{user && user.email}</Nav.Link>
-        {user && user.isAdmin && <Nav.Link href='#!'>Settings</Nav.Link>}
+        {user && user.isAdmin && <Nav.Link href='/settings'>Settings</Nav.Link>}
         <Nav.Link href='#!' onClick={logout}>Log out</Nav.Link>
       </Nav>
     </Fragment>

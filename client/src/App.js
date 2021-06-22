@@ -12,6 +12,7 @@ import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import Games from './components/games/Games'
 import Game from './components/games/Game'
+import Settings from './components/settings/Settings'
 import history from './history'
 import store from './store'
 
@@ -30,7 +31,7 @@ const App = () => {
                 <Route exact path='/sign_up' component={Register}/>
                 <Route exact path='/games' component={Games}/>
                 <Route exact path='/games/:id' component={Game}></Route>
-                <Route exact path='/settings'>Настройки</Route>
+                <Route exact path='/settings' component={Settings}/>
                 <Route path='*' component={NotFound}/>
               </Switch>
             </Col>
