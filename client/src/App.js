@@ -9,6 +9,7 @@ import Alerts from './components/layout/Alerts'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import Games from './components/games/Games'
+import Game from './components/games/Game'
 import store from './store'
 
 const App = () => {
@@ -25,7 +26,7 @@ const App = () => {
                 <Route exact path='/sign_in' component={Login}/>
                 <Route exact path='/sign_up' component={Register}/>
                 <Route exact path='/games' component={Games}/>
-                <Route exact path='/games/:id'>Игра</Route>
+                <Route exact path='/games/:id' component={Game}></Route>
                 <Route exact path='/settings'>Настройки</Route>
                 <Route path='*'>404</Route>
               </Switch>
