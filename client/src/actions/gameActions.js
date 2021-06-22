@@ -49,3 +49,25 @@ export const markCell = (gameId, x, y) => dispatch => {
     }
   )
 }
+
+export const openCell = (gameId, x, y) => dispatch => {
+  return doOpenCell(gameId, x, y).
+    then(response => {
+      dispatch({
+        type: OPEN_CELL,
+        payload: response.data
+      })
+
+      return Promise.resolve()
+    },
+    error => {
+      const msg = (error.response && error.response.data && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
+
+      dispatch(setAlert(msg))
+
+      return Promise.resolve()
+    }
+  )
+}

@@ -2,24 +2,24 @@ import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { markCell } from '../../actions/gameActions'
+import { markCell, openCell } from '../../actions/gameActions'
 
 import mine from './mine.png'
 import flag from './flag.png'
 import './styles.scss'
 
-const Cell = ({ markCell, cell, gameStatus }) => {
+const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId }, gameStatus }) => {
   const info = () => {
-    const klass = `${cell.status === 'empty' ? 'opened' : 'closed'} text-center`
+    const klass = `${status === 'empty' ? 'opened' : 'closed'} text-center`
 
     let content = ''
 
-    if (cell.status === 'marked') {
+    if (status === 'marked') {
       content = <img src={flag} alt='!'/>
       if (gameStatus === 'fail') content = <img src={mine} alt='M'/>
     }
 
-    if (cell.status === 'empty' && +cell.bombsNear > 0) content = <span className={`mines-${cell.bombsNear}`}>{cell.bombsNear}</span>
+    if (status === 'empty' && +bombsNear > 0) content = <span className={`mines-${bombsNear}`}>{bombsNear}</span>
 
     return { klass: klass, content: content }
   }
@@ -29,7 +29,7 @@ const Cell = ({ markCell, cell, gameStatus }) => {
   const mark = e => {
     e.preventDefault()
 
-    const { gameId, x, y } = cell
+    if (gameStatus !== 'in_progress') return
 
     markCell(gameId, x, y)
   }
@@ -37,14 +37,14 @@ const Cell = ({ markCell, cell, gameStatus }) => {
   const open = e => {
     e.preventDefault()
 
-    const { x, y } = e.target.dataset
+    if (gameStatus !== 'in_progress') return
 
-    console.log(x, y, 'open')
+    openCell(gameId, x, y)
   }
 
   return (
     <div
-      key={cell.id}
+      key={id}
       className={klass}
       onClick={open}
       onContextMenu={mark}
@@ -56,6 +56,7 @@ const Cell = ({ markCell, cell, gameStatus }) => {
 
 Cell.propTypes = {
   markCell: PropTypes.func.isRequired,
+  openCell: PropTypes.func.isRequired,
 }
 
-export default connect(null, { markCell })(Cell)
+export default connect(null, { markCell, openCell })(Cell)
