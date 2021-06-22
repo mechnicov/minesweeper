@@ -31,6 +31,8 @@ export const startGame = () => dispatch => {
 
       dispatch(setAlert(msg))
 
+      history.push('/')
+
       return Promise.resolve()
     }
   )
@@ -51,6 +53,8 @@ export const getOneGame = gameId => dispatch => {
                   error.toString()
 
       dispatch(setAlert(msg))
+
+      history.push('/')
 
       return Promise.resolve()
     }
@@ -74,6 +78,8 @@ export const markCell = (gameId, x, y) => dispatch => {
 
       dispatch(setAlert(msg))
 
+      history.push('/')
+
       return Promise.resolve()
     }
   )
@@ -95,6 +101,8 @@ export const openCell = (gameId, x, y) => dispatch => {
                   error.toString()
 
       dispatch(setAlert(msg))
+
+      history.push('/')
 
       return Promise.resolve()
     }

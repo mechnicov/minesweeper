@@ -8,6 +8,8 @@ import {
   USER_NOT_LOAD,
 } from './types'
 
+import history from '../history'
+
 import { doRegister, doLogin, doLogout, doLoadUser } from '../utils/authServices'
 import { setAlert } from './alertActions'
 
@@ -74,6 +76,8 @@ export const logout = () => dispatch => {
   })
 
   dispatch(setAlert('See you soon'))
+
+  history.push('/')
 }
 
 export const loadUser = () => dispatch => {
@@ -96,6 +100,8 @@ export const loadUser = () => dispatch => {
       })
 
       dispatch(setAlert(msg))
+
+      history.push('/')
 
       return Promise.resolve()
     }

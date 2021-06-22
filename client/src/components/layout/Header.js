@@ -3,16 +3,10 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Navbar, Nav } from 'react-bootstrap'
 
-import history from '../../history'
 import { logout } from '../../actions/authActions'
 import { startGame } from '../../actions/gameActions'
 
 const Header = ({ logout, startGame, isLoggedIn, user }) => {
-  const logOutAndRedirect = () => {
-    logout()
-    history.push('/')
-  }
-
   const leftGuestLinks = (
     <Fragment>
       <Nav.Link href='/sign_in'>Sign in</Nav.Link>
@@ -32,7 +26,7 @@ const Header = ({ logout, startGame, isLoggedIn, user }) => {
       <Nav>
         <Nav.Link href='#!'>{user && user.email}</Nav.Link>
         {user && user.isAdmin && <Nav.Link href='#!'>Settings</Nav.Link>}
-        <Nav.Link href='#!' onClick={logOutAndRedirect}>Log out</Nav.Link>
+        <Nav.Link href='#!' onClick={logout}>Log out</Nav.Link>
       </Nav>
     </Fragment>
   )
