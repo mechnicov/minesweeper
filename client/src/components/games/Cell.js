@@ -36,6 +36,8 @@ const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId 
       case 'bomb':
         content = <img src={mine} alt='M'/>
         break
+      default:
+        break
     }
 
     if (status === 'empty' && +bombsNear > 0) content = <span className={`mines-${bombsNear}`}>{bombsNear}</span>
