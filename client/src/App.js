@@ -7,6 +7,7 @@ import './App.scss'
 import Header from './components/layout/Header'
 import Alerts from './components/layout/Alerts'
 import Home from './components/layout/Home'
+import NotFound from './components/layout/NotFound'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import Games from './components/games/Games'
@@ -30,7 +31,7 @@ const App = () => {
                 <Route exact path='/games' component={Games}/>
                 <Route exact path='/games/:id' component={Game}></Route>
                 <Route exact path='/settings'>Настройки</Route>
-                <Route path='*'>404</Route>
+                <Route path='*' component={NotFound}/>
               </Switch>
             </Col>
           </Row>
