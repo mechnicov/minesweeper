@@ -1,4 +1,5 @@
 import {
+  START_GAME,
   GET_GAME,
   OPEN_CELL,
   MARK_CELL,
@@ -10,6 +11,11 @@ export default (state = initialState, action) => {
   const { type, payload } = action
 
   switch (type) {
+    case START_GAME:
+      return {
+        ...state,
+        game: payload,
+      }
     case GET_GAME:
       return {
         ...state,

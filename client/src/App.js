@@ -1,5 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { Router, Route, Switch } from 'react-router-dom'
 import { Provider } from 'react-redux'
 
 import './App.scss'
@@ -10,12 +10,13 @@ import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import Games from './components/games/Games'
 import Game from './components/games/Game'
+import history from './history'
 import store from './store'
 
 const App = () => {
   return (
     <Provider store={store}>
-      <Router>
+      <Router history={history}>
         <Header/>
         <Container>
           <Alerts/>

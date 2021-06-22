@@ -1,14 +1,13 @@
 import React, { Fragment } from 'react'
-import { useHistory } from 'react-router'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Navbar, Nav } from 'react-bootstrap'
 
+import history from '../../history'
 import { logout } from '../../actions/authActions'
+import { startGame } from '../../actions/gameActions'
 
-const Header = ({ logout, isLoggedIn, user }) => {
-  let history = useHistory()
-
+const Header = ({ logout, startGame, isLoggedIn, user }) => {
   const logOutAndRedirect = () => {
     logout()
     history.push('/')
@@ -23,7 +22,7 @@ const Header = ({ logout, isLoggedIn, user }) => {
 
   const leftUserLinks = (
     <Fragment>
-      <Nav.Link href='#'>New game</Nav.Link>
+      <Nav.Link href='#!' onClick={startGame}>New game</Nav.Link>
       <Nav.Link href='/games'>My games</Nav.Link>
     </Fragment>
   )
@@ -52,8 +51,9 @@ const Header = ({ logout, isLoggedIn, user }) => {
 }
 
 Header.propTypes = {
-  user: PropTypes.object,
   logout: PropTypes.func.isRequired,
+  startGame: PropTypes.func.isRequired,
+  user: PropTypes.object,
   isLoggedIn: PropTypes.bool.isRequired,
 }
 
@@ -62,4 +62,4 @@ const mapStateToProps = state => ({
   user: state.authReducer.user,
 })
 
-export default connect(mapStateToProps, { logout })(Header)
+export default connect(mapStateToProps, { logout, startGame })(Header)

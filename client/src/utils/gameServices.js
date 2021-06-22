@@ -6,6 +6,10 @@ export const doGetAllGames = () => {
   return axios.get('/api/v1/games', { headers: authHeader() })
 }
 
+export const doStartGame = () => {
+  return axios.post('/api/v1/games', {}, { headers: authHeader() })
+}
+
 export const doGetOneGame = gameId => {
   return axios.get(`/api/v1/games/${gameId}`, { headers: authHeader() })
 }
