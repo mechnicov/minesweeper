@@ -1,0 +1,55 @@
+.game-map {
+  display: grid;
+  grid-gap: 1px;
+
+  div {
+    cursor: pointer;
+    font-weight: bolder;
+    border: 1px outset #ececec;
+  }
+
+  div.closed {
+    background: #d9d9d9;
+  }
+
+  div.opened {
+    background: #f2f2f2;
+  }
+
+  span.mines-1 {
+    color: #0101ff;
+  }
+
+  span.mines-2 {
+    color: #007800;
+  }
+
+  span.mines-3 {
+    color: #f22727;
+  }
+
+  span.mines-4 {
+    color: #010178;
+  }
+
+  span.mines-5 {
+    color: #7b0505;
+  }
+
+  span.mines-6 {
+    color: #007b7b;
+  }
+
+  span.mines-7 {
+    color: #070707;
+  }
+
+  span.mines-8 {
+    color: #767676;
+  }
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+}
