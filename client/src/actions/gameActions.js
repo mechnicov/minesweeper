@@ -14,6 +14,27 @@ export const getOneGame = gameId => dispatch => {
         type: GET_GAME,
         payload: response.data
       })
+      return Promise.resolve()
+    },
+    error => {
+      const msg = (error.response && error.response.data && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
+
+      dispatch(setAlert(msg))
+
+      return Promise.resolve()
+    }
+  )
+}
+
+export const markCell = (gameId, x, y) => dispatch => {
+  return doMarkCell(gameId, x, y).
+    then(response => {
+      dispatch({
+        type: MARK_CELL,
+        payload: response.data
+      })
 
       return Promise.resolve()
     },

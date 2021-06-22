@@ -1,10 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+
+import { markCell } from '../../actions/gameActions'
 
 import mine from './mine.png'
 import flag from './flag.png'
 import './styles.scss'
 
-const Cell = ({ cell, gameStatus }) => {
+const Cell = ({ markCell, cell, gameStatus }) => {
   const info = () => {
     const klass = `${cell.status === 'empty' ? 'opened' : 'closed'} text-center`
 
@@ -22,15 +26,15 @@ const Cell = ({ cell, gameStatus }) => {
 
   const { klass, content } = info()
 
-  const markCell = e => {
+  const mark = e => {
     e.preventDefault()
 
-    const { x, y } = e.target.dataset
+    const { gameId, x, y } = cell
 
-    console.log(x, y, 'mark')
+    markCell(gameId, x, y)
   }
 
-  const openCell = e => {
+  const open = e => {
     e.preventDefault()
 
     const { x, y } = e.target.dataset
@@ -41,15 +45,17 @@ const Cell = ({ cell, gameStatus }) => {
   return (
     <div
       key={cell.id}
-      data-x={cell.x}
-      data-y={cell.y}
       className={klass}
-      onClick={openCell}
-      onContextMenu={markCell}
+      onClick={open}
+      onContextMenu={mark}
     >
       {content}
     </div>
   )
 }
 
-export default Cell
+Cell.propTypes = {
+  markCell: PropTypes.func.isRequired,
+}
+
+export default connect(null, { markCell })(Cell)
