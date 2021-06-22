@@ -31,7 +31,6 @@ class Cell(id: EntityID<Int>) : IntEntity(id) {
             this.id.value,
             this.x,
             this.y,
-            this.isBomb,
             this.bombsNear,
             this.status.value,
             this.game.id.value,
@@ -42,11 +41,14 @@ data class CellData(
     val id: Int,
     val x: Int,
     val y: Int,
-    val isBomb: Boolean,
-    var bombsNear: Int,
+    var bombsNear: Int?,
     val status: String,
     val gameId: Int,
-)
+) {
+    init {
+        if (status == "closed" || status == "marked") bombsNear = null
+    }
+}
 
 enum class CellStatus(val value: String) {
     MARKED("marked"),

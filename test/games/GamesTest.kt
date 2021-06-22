@@ -59,7 +59,6 @@ class GamesTest : ApplicationTest() {
                 Assert.assertEquals(game.cells.size, 6)
                 Assert.assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
                 Assert.assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
-                Assert.assertEquals(game.cells.filter { it.isBomb }.size, 1)
                 Assertions.assertThat(
                     game.cells.map { it.x to it.y }).hasSameElementsAs(
                     listOf(0 to 0, 0 to 1, 0 to 2, 1 to 0, 1 to 1, 1 to 2)
@@ -107,7 +106,6 @@ class GamesTest : ApplicationTest() {
                 Assert.assertEquals(game.cells.size, 6)
                 Assert.assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
                 Assert.assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
-                Assert.assertEquals(game.cells.filter { it.isBomb }.size, 1)
                 Assertions.assertThat(
                     game.cells.map { it.x to it.y }).hasSameElementsAs(
                     listOf(0 to 0, 0 to 1, 0 to 2, 1 to 0, 1 to 1, 1 to 2)
@@ -191,7 +189,6 @@ class GamesTest : ApplicationTest() {
                 Assert.assertEquals(game.cells.size, 6)
                 Assert.assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
                 Assert.assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
-                Assert.assertEquals(game.cells.filter { it.isBomb }.size, 1)
                 Assertions.assertThat(
                     game.cells.map { it.x to it.y }).hasSameElementsAs(
                     listOf(0 to 0, 0 to 1, 0 to 2, 1 to 0, 1 to 1, 1 to 2)
