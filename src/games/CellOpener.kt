@@ -36,10 +36,15 @@ class CellOpener(private val cell: Cell) {
 
     private fun finishFail() {
         game.status = FAIL
+        markAllBombs()
     }
 
     private fun finishWin() {
         game.status = WON
+        markAllBombs()
+    }
+
+    private fun markAllBombs() {
         game.cells.filter { it.isBomb }.forEach { it.status = MARKED }
     }
 }
