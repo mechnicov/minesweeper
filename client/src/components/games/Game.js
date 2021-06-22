@@ -4,12 +4,15 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import Cell from './Cell'
+import { loadUser } from '../../actions/authActions'
 import { getOneGame } from '../../actions/gameActions'
 
-const Game = ({ getOneGame, game }) => {
+const Game = ({ loadUser, getOneGame, game }) => {
   const gameId = useParams().id
 
   useEffect(() => {
+    loadUser()
+
     if (game === null) {
       getOneGame(gameId)
     }
@@ -42,6 +45,7 @@ const Game = ({ getOneGame, game }) => {
 }
 
 Game.propTypes = {
+  loadUser: PropTypes.func.isRequired,
   getOneGame: PropTypes.func.isRequired,
   game: PropTypes.object,
 }
@@ -50,4 +54,4 @@ const mapStateToProps = state => ({
   game: state.gameReducer.game,
 })
 
-export default connect(mapStateToProps, { getOneGame })(Game)
+export default connect(mapStateToProps, { loadUser, getOneGame })(Game)
