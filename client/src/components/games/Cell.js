@@ -30,6 +30,7 @@ const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId 
     e.preventDefault()
 
     if (gameStatus !== 'in_progress') return
+    if (status === 'empty') return
 
     markCell(gameId, x, y)
   }
@@ -38,6 +39,7 @@ const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId 
     e.preventDefault()
 
     if (gameStatus !== 'in_progress') return
+    if (status !== 'closed') return
 
     openCell(gameId, x, y)
   }
