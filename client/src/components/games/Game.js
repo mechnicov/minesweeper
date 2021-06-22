@@ -37,6 +37,7 @@ const Game = ({ loadUser, getOneGame, game }) => {
               <Cell key={cell.id} cell={cell} gameStatus={game.status}/>
             )}
           </div>
+          {game.status === 'in_progress' && <div className='mt-4'>Left: {game.bombsCount - game.cells.filter(cell => cell.status === 'marked').length}</div>}
           <div className='mt-4'>Status: {game.status}</div>
         </Fragment>
       }

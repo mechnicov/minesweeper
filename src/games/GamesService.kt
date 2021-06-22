@@ -28,6 +28,7 @@ class GamesServiceDB : GamesService {
             val newGame = Game.new {
                 width = settings.width
                 height = settings.height
+                bombsCount = settings.bombsCount
                 user = gameUser
             }
 
