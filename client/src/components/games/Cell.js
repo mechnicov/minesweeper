@@ -10,13 +10,32 @@ import './styles.scss'
 
 const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId }, gameStatus }) => {
   const info = () => {
-    const klass = `${status === 'empty' ? 'opened' : 'closed'} text-center`
+    let klass
+
+    switch (status) {
+      case 'empty':
+        klass = 'opened'
+        break
+      case 'exposed':
+        klass = 'exposed'
+        break
+      default:
+        klass = 'closed'
+        break
+    }
+
+    klass = `${klass} text-center`
 
     let content = ''
 
-    if (status === 'marked') {
-      content = <img src={flag} alt='!'/>
-      if (gameStatus === 'fail') content = <img src={mine} alt='M'/>
+    switch (status) {
+      case 'marked':
+        content = <img src={flag} alt='!'/>
+        break
+      case 'exposed':
+      case 'bomb':
+        content = <img src={mine} alt='M'/>
+        break
     }
 
     if (status === 'empty' && +bombsNear > 0) content = <span className={`mines-${bombsNear}`}>{bombsNear}</span>

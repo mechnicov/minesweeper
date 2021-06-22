@@ -46,7 +46,7 @@ data class CellData(
     val gameId: Int,
 ) {
     init {
-        if (status == "closed" || status == "marked") bombsNear = null
+        if (status != "empty") bombsNear = null
     }
 }
 
@@ -54,4 +54,6 @@ enum class CellStatus(val value: String) {
     MARKED("marked"),
     CLOSED("closed"),
     EMPTY("empty"),
+    EXPOSED("exposed"),
+    BOMB("bomb"),
 }
