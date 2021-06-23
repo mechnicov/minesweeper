@@ -2,6 +2,7 @@ package com.mines.games
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mines.ApplicationTest
+import com.mines.cells.Cell
 import com.mines.cells.CellStatus
 import com.mines.module
 import com.mines.mapper
@@ -320,6 +321,130 @@ class GamesTest : ApplicationTest() {
             }
         }
     }
+
+    @DisplayName("Open Cell")
+    @Nested
+    inner class OpenCell {
+        @Test
+        fun `when user is not owner`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                transaction {
+                    Setting.new {
+                        width = 2
+                        height = 3
+                        bombsCount = 1
+                    }
+                }
+
+                val createOwner = createUser("user@example.com", "qwerty")
+                val createOwnerResponse: Map<String, String> = mapper.readValue(createOwner.response.content!!)
+
+                val ownerToken = createOwnerResponse["token"].toString()
+
+                val game: GameData = mapper.readValue(createGame(ownerToken).response.content!!)
+                val gameId = game.id
+
+                val otherUser = createUser("other@example.com", "qwerty")
+                val otherUserResponse: Map<String, String> = mapper.readValue(otherUser.response.content!!)
+
+                val otherUserToken = otherUserResponse["token"].toString()
+
+                val call = openCell(gameId, 0, 2, otherUserToken)
+
+                Assert.assertEquals(HttpStatusCode.NotFound, call.response.status())
+                Assert.assertEquals(
+                    mapOf("message" to "Resource not found", "errorCode" to 404),
+                    mapper.readValue(call.response.content!!)
+                )
+            }
+        }
+
+        @Test
+        fun `when cell is bomb`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                val createUserCall = createUser("user@example.com", "qwerty")
+                val createUserResponse: Map<String, String> = mapper.readValue(createUserCall.response.content!!)
+
+                val token = createUserResponse["token"].toString()
+
+                transaction {
+                    Game.new {
+                        bombsCount = 1
+                        width = 4
+                        height = 4
+                        user = User.findById(1)!!
+                    }
+
+                    (0 until 4).forEach { j ->
+                        (0 until 4).forEach { i ->
+                            Cell.new {
+                                x = i
+                                y = j
+                                isBomb = (i == 0 && j == 0)
+                                bombsNear = if (i == 1 && j == 0 || i == 1 && j == 1 || i == 0 && j == 1) 1 else 0
+                                game = Game.findById(1)!!
+                            }
+                        }
+                    }
+                }
+
+                val call = openCell(1, 0, 0, token)
+                val updatedGame: GameData = mapper.readValue(call.response.content!!)
+
+                Assert.assertEquals(updatedGame.id, 1)
+                Assert.assertEquals(updatedGame.width, 4)
+                Assert.assertEquals(updatedGame.height, 4)
+                Assert.assertEquals(updatedGame.status, GameStatus.FAIL.value)
+
+                Assert.assertEquals(updatedGame.cells.size, 16)
+                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.EXPOSED.value)
+                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 15)
+            }
+        }
+
+        @Test
+        fun `when cell is not bomb`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                val createUserCall = createUser("user@example.com", "qwerty")
+                val createUserResponse: Map<String, String> = mapper.readValue(createUserCall.response.content!!)
+
+                val token = createUserResponse["token"].toString()
+
+                transaction {
+                    Game.new {
+                        bombsCount = 1
+                        width = 4
+                        height = 4
+                        user = User.findById(1)!!
+                    }
+
+                    (0 until 4).forEach { j ->
+                        (0 until 4).forEach { i ->
+                            Cell.new {
+                                x = i
+                                y = j
+                                isBomb = (i == 0 && j == 0)
+                                bombsNear = if (i == 1 && j == 0 || i == 1 && j == 1 || i == 0 && j == 1) 1 else 0
+                                game = Game.findById(1)!!
+                            }
+                        }
+                    }
+                }
+
+                val call = openCell(1, 3, 3, token)
+                val updatedGame: GameData = mapper.readValue(call.response.content!!)
+
+                Assert.assertEquals(updatedGame.id, 1)
+                Assert.assertEquals(updatedGame.width, 4)
+                Assert.assertEquals(updatedGame.height, 4)
+                Assert.assertEquals(updatedGame.status, GameStatus.WON.value)
+
+                Assert.assertEquals(updatedGame.cells.size, 16)
+                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.MARKED.value)
+                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.EMPTY.value }.size, 15)
+            }
+        }
+    }
 }
 
 fun TestApplicationEngine.createGame(token: String): TestApplicationCall {
@@ -331,6 +456,14 @@ fun TestApplicationEngine.createGame(token: String): TestApplicationCall {
 
 fun TestApplicationEngine.markCell(gameId: Int, x: Int, y: Int, token: String): TestApplicationCall {
     return handleRequest(HttpMethod.Post, "/api/v1/games/$gameId/mark") {
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        addHeader(HttpHeaders.Authorization, "Bearer $token")
+        setBody(mapper.writeValueAsString(mapOf("x" to x, "y" to y)))
+    }
+}
+
+fun TestApplicationEngine.openCell(gameId: Int, x: Int, y: Int, token: String): TestApplicationCall {
+    return handleRequest(HttpMethod.Post, "/api/v1/games/$gameId/open") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         addHeader(HttpHeaders.Authorization, "Bearer $token")
         setBody(mapper.writeValueAsString(mapOf("x" to x, "y" to y)))
