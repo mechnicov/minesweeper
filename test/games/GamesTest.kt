@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.mines.ApplicationTest
 import com.mines.cells.Cell
 import com.mines.cells.CellStatus
+import com.mines.cells.Cells
 import com.mines.module
 import com.mines.mapper
 import com.mines.settings.Setting
@@ -370,35 +371,56 @@ class GamesTest : ApplicationTest() {
                 transaction {
                     Game.new {
                         bombsCount = 1
-                        width = 4
-                        height = 4
+                        width = 2
+                        height = 2
                         user = User.findById(1)!!
                     }
 
-                    (0 until 4).forEach { j ->
-                        (0 until 4).forEach { i ->
+                    (0 until 2).forEach { j ->
+                        (0 until 2).forEach { i ->
                             Cell.new {
                                 x = i
                                 y = j
                                 isBomb = (i == 0 && j == 0)
-                                bombsNear = if (i == 1 && j == 0 || i == 1 && j == 1 || i == 0 && j == 1) 1 else 0
+                                bombsNear = if (i == 0 && j == 0) 0 else 1
                                 game = Game.findById(1)!!
                             }
                         }
                     }
                 }
 
-                val call = openCell(1, 0, 0, token)
-                val updatedGame: GameData = mapper.readValue(call.response.content!!)
+                // First attempt rescue
+                var call = openCell(1, 0, 0, token)
+                var updatedGame: GameData = mapper.readValue(call.response.content!!)
 
                 Assert.assertEquals(updatedGame.id, 1)
-                Assert.assertEquals(updatedGame.width, 4)
-                Assert.assertEquals(updatedGame.height, 4)
+                Assert.assertEquals(updatedGame.width, 2)
+                Assert.assertEquals(updatedGame.height, 2)
+                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+
+                Assert.assertEquals(updatedGame.cells.size, 4)
+                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.EMPTY.value)
+
+                Assert.assertEquals(updatedGame.openingsCount, 1)
+
+                // Second attempt fail
+                var bombCell =
+                    transaction {
+                        Cell.find { Cells.isBomb eq true }.first().data()
+                    }
+
+                call = openCell(1, bombCell.x, bombCell.y, token)
+                updatedGame = mapper.readValue(call.response.content!!)
+
+                bombCell = updatedGame.cells.find { it.x == bombCell.x && it.y == bombCell.y }!!
+
+                Assert.assertEquals(updatedGame.id, 1)
+                Assert.assertEquals(updatedGame.width, 2)
+                Assert.assertEquals(updatedGame.height, 2)
                 Assert.assertEquals(updatedGame.status, GameStatus.FAIL.value)
 
-                Assert.assertEquals(updatedGame.cells.size, 16)
-                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.EXPOSED.value)
-                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 15)
+                Assert.assertEquals(updatedGame.cells.size, 4)
+                Assert.assertEquals(bombCell.status, CellStatus.EXPOSED.value)
 
                 Assert.assertEquals(updatedGame.openingsCount, 1)
             }

@@ -3,6 +3,7 @@ package com.mines.games
 import com.mines.cells.Cell
 import com.mines.cells.CellStatus.*
 import com.mines.games.GameStatus.*
+import com.mines.games.NearCoordinatesCalculator.nearCoordinates
 
 class CellOpener(private val cell: Cell) {
     private val game = cell.game
@@ -10,7 +11,10 @@ class CellOpener(private val cell: Cell) {
     fun tryToOpen() {
         if (cell.status != CLOSED) return
 
-        if (cell.isBomb) return finishFail()
+        if (cell.isBomb) {
+            if (game.openingsCount > 0) return finishFail()
+            return rescue()
+        }
 
         open(cell)
     }
@@ -25,15 +29,19 @@ class CellOpener(private val cell: Cell) {
         if (game.cells.asSequence().filter { !it.isBomb }.all { it.status == EMPTY }) return finishWin()
 
         if (cell.bombsNear == 0) {
-            NearCoordinatesCalculator.
-                nearCoordinates(cell.x, cell.y).
-                forEach { coordinates ->
-                    val nearCell =
-                        game.cells.find { it.x == coordinates.first() && it.y == coordinates.last() } ?: return@forEach
+            nearCoordinates(cell.x, cell.y).forEach { coordinates ->
+                val nearCell =
+                    game.cells.find { it.x == coordinates.first() && it.y == coordinates.last() } ?: return@forEach
 
-                    if (nearCell.status == CLOSED && !nearCell.isBomb) open(nearCell, true)
-                }
+                if (nearCell.status == CLOSED && !nearCell.isBomb) open(nearCell, true)
+            }
         }
+    }
+
+    private fun rescue() {
+        BombCellRescuer(cell).rescue()
+
+        open(cell)
     }
 
     private fun finishFail() {

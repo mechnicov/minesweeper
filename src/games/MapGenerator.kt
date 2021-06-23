@@ -1,5 +1,7 @@
 package com.mines.games
 
+import com.mines.games.NearCoordinatesCalculator.bombsNear
+
 class MapGenerator(private val width: Int, private val height: Int, private val bombsCount: Int) {
     data class MapCell(val x: Int, val y: Int, val isBomb: Boolean = false, val bombsNear: Int)
 
@@ -36,9 +38,5 @@ class MapGenerator(private val width: Int, private val height: Int, private val 
                 break@install
             }
         }
-    }
-
-    private fun bombsNear(x: Int, y: Int, locations: MutableList<ArrayList<Int>>): Int {
-        return NearCoordinatesCalculator.nearCoordinates(x, y).count { locations.contains(it) }
     }
 }
