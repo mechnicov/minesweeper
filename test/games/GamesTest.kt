@@ -318,6 +318,42 @@ class GamesTest : ApplicationTest() {
                 Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
 
                 Assert.assertEquals(updatedGame.cells.size, 6)
+                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 2 }?.status, CellStatus.QUESTION.value)
+                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 5)
+            }
+        }
+
+        @Test
+        fun `when cell is question`() {
+            withTestApplication(moduleFunction = { module(testing = true) }) {
+                transaction {
+                    Setting.new {
+                        width = 2
+                        height = 3
+                        bombsCount = 1
+                    }
+                }
+
+                val createCall = createUser("user@example.com", "qwerty")
+                val createResponse: Map<String, String> = mapper.readValue(createCall.response.content!!)
+
+                val token = createResponse["token"].toString()
+
+                val game: GameData = mapper.readValue(createGame(token).response.content!!)
+                val gameId = game.id
+
+                markCell(gameId, 0, 2, token)
+                markCell(gameId, 0, 2, token)
+                val call = markCell(gameId, 0, 2, token)
+
+                val updatedGame: GameData = mapper.readValue(call.response.content!!)
+
+                Assert.assertEquals(updatedGame.id, gameId)
+                Assert.assertEquals(updatedGame.width, 2)
+                Assert.assertEquals(updatedGame.height, 3)
+                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+
+                Assert.assertEquals(updatedGame.cells.size, 6)
                 Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 6)
             }
         }

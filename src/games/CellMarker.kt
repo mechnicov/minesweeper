@@ -12,7 +12,8 @@ object CellMarker {
 
         when (cell.status) {
             CLOSED -> cell.status = MARKED
-            MARKED -> cell.status = CLOSED
+            MARKED -> cell.status = QUESTION
+            QUESTION -> cell.status = CLOSED
         }
     }
 }

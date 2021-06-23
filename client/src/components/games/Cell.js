@@ -32,6 +32,9 @@ const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId 
       case 'marked':
         content = <img src={flag} alt='!'/>
         break
+      case 'question':
+        content = <span>?</span>
+        break
       case 'exposed':
       case 'bomb':
         content = <img src={mine} alt='M'/>
