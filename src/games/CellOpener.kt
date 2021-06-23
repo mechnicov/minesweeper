@@ -15,8 +15,10 @@ class CellOpener(private val cell: Cell) {
         open(cell)
     }
 
-    private fun open(cell: Cell) {
+    private fun open(cell: Cell, auto: Boolean = false) {
         if (game.status != IN_PROGRESS) return
+
+        if (!auto) game.openingsCount++
 
         cell.status = EMPTY
 
@@ -29,7 +31,7 @@ class CellOpener(private val cell: Cell) {
                     val nearCell =
                         game.cells.find { it.x == coordinates.first() && it.y == coordinates.last() } ?: return@forEach
 
-                    if (nearCell.status == CLOSED && !nearCell.isBomb) open(nearCell)
+                    if (nearCell.status == CLOSED && !nearCell.isBomb) open(nearCell, true)
                 }
         }
     }

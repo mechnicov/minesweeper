@@ -399,6 +399,8 @@ class GamesTest : ApplicationTest() {
                 Assert.assertEquals(updatedGame.cells.size, 16)
                 Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.EXPOSED.value)
                 Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 15)
+
+                Assert.assertEquals(updatedGame.openingsCount, 1)
             }
         }
 
@@ -442,6 +444,8 @@ class GamesTest : ApplicationTest() {
                 Assert.assertEquals(updatedGame.cells.size, 16)
                 Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.MARKED.value)
                 Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.EMPTY.value }.size, 15)
+
+                Assert.assertEquals(updatedGame.openingsCount, 1)
             }
         }
     }

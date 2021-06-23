@@ -16,6 +16,7 @@ object Games : IntIdTable() {
     val height = integer("height")
     val status = enumerationByName("status", 20, GameStatus::class).default(GameStatus.IN_PROGRESS)
     val bombsCount = integer("bombs_count")
+    val openingsCount = integer("openings_count").default(0)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime())
     val user = reference("user_id", Users)
 }
@@ -27,6 +28,7 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
     var height by Games.height
     var status by Games.status
     var bombsCount by Games.bombsCount
+    var openingsCount by Games.openingsCount
     var createdAt by Games.createdAt
     var user by User referencedOn Games.user
     val cells by Cell referrersOn Cells.game
@@ -38,6 +40,7 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
             this.height,
             this.status.value,
             this.bombsCount,
+            this.openingsCount,
             this.createdAt.toDateTimeISO().toString(),
             this.user.id.value,
             this.cells.map { it.data() }
@@ -51,6 +54,7 @@ data class GameData(
     val height: Int,
     val status: String,
     val bombsCount: Int,
+    val openingsCount: Int,
     val createdAt: String,
     val userId: Int,
     var cells: List<CellData>
