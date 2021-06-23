@@ -56,7 +56,7 @@ data class GameData(
     var cells: List<CellData>
 ) {
     init {
-       cells = cells.sortedWith(compareBy({ it.y }, { it.x }))
+       cells = cells.sortedWith(compareBy(CellData::y, CellData::x))
     }
 }
 
