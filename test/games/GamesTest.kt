@@ -456,7 +456,7 @@ class GamesTest : ApplicationTest() {
                 assertEquals(updatedGame.status, GameStatus.FAIL.value)
 
                 assertEquals(updatedGame.cells.size, 4)
-                assertEquals(bombCell.status, CellStatus.EXPOSED.value)
+                assertEquals(bombCell.status, CellStatus.EXPLODED.value)
 
                 assertEquals(updatedGame.openingsCount, 1)
             }

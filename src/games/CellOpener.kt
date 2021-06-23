@@ -47,7 +47,7 @@ class CellOpener(private val cell: Cell) {
     private fun finishFail() {
         game.status = FAIL
         game.cells.filter { it.isBomb }.forEach { it.status = BOMB }
-        cell.status = EXPOSED
+        cell.status = EXPLODED
     }
 
     private fun finishWin() {

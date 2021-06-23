@@ -55,6 +55,6 @@ enum class CellStatus(val value: String) {
     CLOSED("closed"),
     EMPTY("empty"),
     QUESTION("question"),
-    EXPOSED("exposed"),
+    EXPLODED("exploded"),
     BOMB("bomb"),
 }

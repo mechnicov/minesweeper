@@ -16,8 +16,8 @@ const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId 
       case 'empty':
         klass = 'opened'
         break
-      case 'exposed':
-        klass = 'exposed'
+      case 'exploded':
+        klass = 'exploded'
         break
       default:
         klass = 'closed'
@@ -35,7 +35,7 @@ const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId 
       case 'question':
         content = <span>?</span>
         break
-      case 'exposed':
+      case 'exploded':
       case 'bomb':
         content = <img src={mine} alt='M'/>
         break
