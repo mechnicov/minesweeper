@@ -16,7 +16,7 @@ import io.ktor.http.HttpMethod.Companion.Get
 import io.ktor.server.testing.*
 import org.assertj.core.api.Assertions
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -51,16 +51,16 @@ class GamesTest : ApplicationTest() {
                 val call = createGame(token)
                 val game: GameData = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(HttpStatusCode.OK, call.response.status())
+                assertEquals(HttpStatusCode.OK, call.response.status())
 
-                Assert.assertEquals(game.id, 1)
-                Assert.assertEquals(game.width, 2)
-                Assert.assertEquals(game.height, 3)
-                Assert.assertEquals(game.status, GameStatus.IN_PROGRESS.value)
+                assertEquals(game.id, 1)
+                assertEquals(game.width, 2)
+                assertEquals(game.height, 3)
+                assertEquals(game.status, GameStatus.IN_PROGRESS.value)
 
-                Assert.assertEquals(game.cells.size, 6)
-                Assert.assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
-                Assert.assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
+                assertEquals(game.cells.size, 6)
+                assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
+                assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
                 Assertions.assertThat(
                     game.cells.map { it.x to it.y }).hasSameElementsAs(
                     listOf(0 to 0, 0 to 1, 0 to 2, 1 to 0, 1 to 1, 1 to 2)
@@ -100,14 +100,14 @@ class GamesTest : ApplicationTest() {
                 }.response.content!!
                 val game: GameData = mapper.readValue(response)
 
-                Assert.assertEquals(game.id, 1)
-                Assert.assertEquals(game.width, 2)
-                Assert.assertEquals(game.height, 3)
-                Assert.assertEquals(game.status, GameStatus.IN_PROGRESS.value)
+                assertEquals(game.id, 1)
+                assertEquals(game.width, 2)
+                assertEquals(game.height, 3)
+                assertEquals(game.status, GameStatus.IN_PROGRESS.value)
 
-                Assert.assertEquals(game.cells.size, 6)
-                Assert.assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
-                Assert.assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
+                assertEquals(game.cells.size, 6)
+                assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
+                assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
                 Assertions.assertThat(
                     game.cells.map { it.x to it.y }).hasSameElementsAs(
                     listOf(0 to 0, 0 to 1, 0 to 2, 1 to 0, 1 to 1, 1 to 2)
@@ -140,8 +140,8 @@ class GamesTest : ApplicationTest() {
                     addHeader(HttpHeaders.Authorization, "Bearer $token")
                 }
 
-                Assert.assertEquals(HttpStatusCode.NotFound, call.response.status())
-                Assert.assertEquals(
+                assertEquals(HttpStatusCode.NotFound, call.response.status())
+                assertEquals(
                     mapOf("message" to "Resource not found", "errorCode" to 404),
                     mapper.readValue(call.response.content!!)
                 )
@@ -181,16 +181,16 @@ class GamesTest : ApplicationTest() {
                 val games: List<GameData> = mapper.readValue(response)
                 val game = games.last()
 
-                Assert.assertEquals(games.size, 1)
+                assertEquals(games.size, 1)
 
-                Assert.assertEquals(game.id, 1)
-                Assert.assertEquals(game.width, 2)
-                Assert.assertEquals(game.height, 3)
-                Assert.assertEquals(game.status, GameStatus.IN_PROGRESS.value)
+                assertEquals(game.id, 1)
+                assertEquals(game.width, 2)
+                assertEquals(game.height, 3)
+                assertEquals(game.status, GameStatus.IN_PROGRESS.value)
 
-                Assert.assertEquals(game.cells.size, 6)
-                Assert.assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
-                Assert.assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
+                assertEquals(game.cells.size, 6)
+                assertEquals(game.cells.map { it.gameId }.distinct(), listOf(1))
+                assertEquals(game.cells.map { it.status }.distinct(), listOf(CellStatus.CLOSED.value))
                 Assertions.assertThat(
                     game.cells.map { it.x to it.y }).hasSameElementsAs(
                     listOf(0 to 0, 0 to 1, 0 to 2, 1 to 0, 1 to 1, 1 to 2)
@@ -210,7 +210,7 @@ class GamesTest : ApplicationTest() {
                     addHeader(HttpHeaders.Authorization, "Bearer $token")
                 }
 
-                Assert.assertEquals(
+                assertEquals(
                     emptyList<GameData>(),
                     mapper.readValue(call.response.content!!)
                 )
@@ -247,8 +247,8 @@ class GamesTest : ApplicationTest() {
 
                 val call = markCell(gameId, 0, 2, otherUserToken)
 
-                Assert.assertEquals(HttpStatusCode.NotFound, call.response.status())
-                Assert.assertEquals(
+                assertEquals(HttpStatusCode.NotFound, call.response.status())
+                assertEquals(
                     mapOf("message" to "Resource not found", "errorCode" to 404),
                     mapper.readValue(call.response.content!!)
                 )
@@ -277,14 +277,14 @@ class GamesTest : ApplicationTest() {
                 val call = markCell(gameId, 0, 2, token)
                 val updatedGame: GameData = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(updatedGame.id, gameId)
-                Assert.assertEquals(updatedGame.width, 2)
-                Assert.assertEquals(updatedGame.height, 3)
-                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+                assertEquals(updatedGame.id, gameId)
+                assertEquals(updatedGame.width, 2)
+                assertEquals(updatedGame.height, 3)
+                assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
 
-                Assert.assertEquals(updatedGame.cells.size, 6)
-                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 2 }?.status, CellStatus.MARKED.value)
-                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 5)
+                assertEquals(updatedGame.cells.size, 6)
+                assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 2 }?.status, CellStatus.MARKED.value)
+                assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 5)
             }
         }
 
@@ -312,14 +312,14 @@ class GamesTest : ApplicationTest() {
 
                 val updatedGame: GameData = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(updatedGame.id, gameId)
-                Assert.assertEquals(updatedGame.width, 2)
-                Assert.assertEquals(updatedGame.height, 3)
-                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+                assertEquals(updatedGame.id, gameId)
+                assertEquals(updatedGame.width, 2)
+                assertEquals(updatedGame.height, 3)
+                assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
 
-                Assert.assertEquals(updatedGame.cells.size, 6)
-                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 2 }?.status, CellStatus.QUESTION.value)
-                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 5)
+                assertEquals(updatedGame.cells.size, 6)
+                assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 2 }?.status, CellStatus.QUESTION.value)
+                assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 5)
             }
         }
 
@@ -348,13 +348,13 @@ class GamesTest : ApplicationTest() {
 
                 val updatedGame: GameData = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(updatedGame.id, gameId)
-                Assert.assertEquals(updatedGame.width, 2)
-                Assert.assertEquals(updatedGame.height, 3)
-                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+                assertEquals(updatedGame.id, gameId)
+                assertEquals(updatedGame.width, 2)
+                assertEquals(updatedGame.height, 3)
+                assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
 
-                Assert.assertEquals(updatedGame.cells.size, 6)
-                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 6)
+                assertEquals(updatedGame.cells.size, 6)
+                assertEquals(updatedGame.cells.filter { it.status == CellStatus.CLOSED.value }.size, 6)
             }
         }
     }
@@ -388,8 +388,8 @@ class GamesTest : ApplicationTest() {
 
                 val call = openCell(gameId, 0, 2, otherUserToken)
 
-                Assert.assertEquals(HttpStatusCode.NotFound, call.response.status())
-                Assert.assertEquals(
+                assertEquals(HttpStatusCode.NotFound, call.response.status())
+                assertEquals(
                     mapOf("message" to "Resource not found", "errorCode" to 404),
                     mapper.readValue(call.response.content!!)
                 )
@@ -429,15 +429,15 @@ class GamesTest : ApplicationTest() {
                 var call = openCell(1, 0, 0, token)
                 var updatedGame: GameData = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(updatedGame.id, 1)
-                Assert.assertEquals(updatedGame.width, 2)
-                Assert.assertEquals(updatedGame.height, 2)
-                Assert.assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
+                assertEquals(updatedGame.id, 1)
+                assertEquals(updatedGame.width, 2)
+                assertEquals(updatedGame.height, 2)
+                assertEquals(updatedGame.status, GameStatus.IN_PROGRESS.value)
 
-                Assert.assertEquals(updatedGame.cells.size, 4)
-                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.EMPTY.value)
+                assertEquals(updatedGame.cells.size, 4)
+                assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.EMPTY.value)
 
-                Assert.assertEquals(updatedGame.openingsCount, 1)
+                assertEquals(updatedGame.openingsCount, 1)
 
                 // Second attempt fail
                 var bombCell =
@@ -450,15 +450,15 @@ class GamesTest : ApplicationTest() {
 
                 bombCell = updatedGame.cells.find { it.x == bombCell.x && it.y == bombCell.y }!!
 
-                Assert.assertEquals(updatedGame.id, 1)
-                Assert.assertEquals(updatedGame.width, 2)
-                Assert.assertEquals(updatedGame.height, 2)
-                Assert.assertEquals(updatedGame.status, GameStatus.FAIL.value)
+                assertEquals(updatedGame.id, 1)
+                assertEquals(updatedGame.width, 2)
+                assertEquals(updatedGame.height, 2)
+                assertEquals(updatedGame.status, GameStatus.FAIL.value)
 
-                Assert.assertEquals(updatedGame.cells.size, 4)
-                Assert.assertEquals(bombCell.status, CellStatus.EXPOSED.value)
+                assertEquals(updatedGame.cells.size, 4)
+                assertEquals(bombCell.status, CellStatus.EXPOSED.value)
 
-                Assert.assertEquals(updatedGame.openingsCount, 1)
+                assertEquals(updatedGame.openingsCount, 1)
             }
         }
 
@@ -494,16 +494,16 @@ class GamesTest : ApplicationTest() {
                 val call = openCell(1, 3, 3, token)
                 val updatedGame: GameData = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(updatedGame.id, 1)
-                Assert.assertEquals(updatedGame.width, 4)
-                Assert.assertEquals(updatedGame.height, 4)
-                Assert.assertEquals(updatedGame.status, GameStatus.WON.value)
+                assertEquals(updatedGame.id, 1)
+                assertEquals(updatedGame.width, 4)
+                assertEquals(updatedGame.height, 4)
+                assertEquals(updatedGame.status, GameStatus.WON.value)
 
-                Assert.assertEquals(updatedGame.cells.size, 16)
-                Assert.assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.MARKED.value)
-                Assert.assertEquals(updatedGame.cells.filter { it.status == CellStatus.EMPTY.value }.size, 15)
+                assertEquals(updatedGame.cells.size, 16)
+                assertEquals(updatedGame.cells.find { it.x == 0 && it.y == 0 }?.status, CellStatus.MARKED.value)
+                assertEquals(updatedGame.cells.filter { it.status == CellStatus.EMPTY.value }.size, 15)
 
-                Assert.assertEquals(updatedGame.openingsCount, 1)
+                assertEquals(updatedGame.openingsCount, 1)
             }
         }
     }

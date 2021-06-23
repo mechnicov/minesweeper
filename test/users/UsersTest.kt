@@ -7,7 +7,8 @@ import com.mines.module
 import com.mines.mapper
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -24,8 +25,8 @@ class UsersTest : ApplicationTest() {
 
                 val response: Map<String, String> = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(HttpStatusCode.OK, call.response.status())
-                Assert.assertTrue(response.containsKey("token"))
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertTrue(response.containsKey("token"))
             }
         }
 
@@ -35,8 +36,8 @@ class UsersTest : ApplicationTest() {
                 createUser("user@example.com", "qwerty")
                 val call = createUser("user@example.com", "qwerty")
 
-                Assert.assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
-                Assert.assertEquals(
+                assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
+                assertEquals(
                     mapOf("message" to "User exists", "errorCode" to 422),
                     mapper.readValue(call.response.content!!)
                 )
@@ -55,8 +56,8 @@ class UsersTest : ApplicationTest() {
 
                 val response: Map<String, String> = mapper.readValue(call.response.content!!)
 
-                Assert.assertEquals(HttpStatusCode.OK, call.response.status())
-                Assert.assertTrue(response.containsKey("token"))
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertTrue(response.containsKey("token"))
             }
         }
 
@@ -66,8 +67,8 @@ class UsersTest : ApplicationTest() {
                 createUser("user@example.com", "qwerty")
                 val call = authUser("other@example.com", "qwerty")
 
-                Assert.assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
-                Assert.assertEquals(
+                assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
+                assertEquals(
                     mapOf("message" to "Bad credentials", "errorCode" to 422),
                     mapper.readValue(call.response.content!!)
                 )
@@ -80,8 +81,8 @@ class UsersTest : ApplicationTest() {
                 createUser("user@example.com", "qwerty")
                 val call = authUser("user@example.com", "111111")
 
-                Assert.assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
-                Assert.assertEquals(
+                assertEquals(HttpStatusCode.UnprocessableEntity, call.response.status())
+                assertEquals(
                     mapOf("message" to "Bad credentials", "errorCode" to 422),
                     mapper.readValue(call.response.content!!)
                 )
@@ -101,8 +102,8 @@ class UsersTest : ApplicationTest() {
                 val token = createResponse["token"]
 
                 val call = getCurrentUser(token.toString())
-                Assert.assertEquals(HttpStatusCode.OK, call.response.status())
-                Assert.assertEquals(
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertEquals(
                     mapOf("id" to 1, "email" to "user@example.com", "isAdmin" to false, "games" to emptyList<GameData>(), "password" to "[FILTERED]"),
                     mapper.readValue(call.response.content!!)
                 )
