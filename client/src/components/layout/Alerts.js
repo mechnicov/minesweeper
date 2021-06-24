@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Alert } from 'react-bootstrap'
 
-const Alerts = ({ alerts }) => {
+const Alerts = ({ alert: { alerts }}) => {
   return (
     alerts.length > 0 && alerts.map(alert => (
       <Alert key={alert.id} variant='dark' className='mt-3'>
@@ -14,11 +14,11 @@ const Alerts = ({ alerts }) => {
 }
 
 Alerts.propTypes = {
-  alerts: PropTypes.array.isRequired,
+  alert: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = state => ({
-  alerts: state.alertReducer.alerts,
+  alert: state.alert,
 })
 
 export default connect(mapStateToProps, {})(Alerts)

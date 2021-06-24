@@ -6,7 +6,7 @@ import { Navbar, Nav } from 'react-bootstrap'
 import { logout } from '../../actions/authActions'
 import { startGame } from '../../actions/gameActions'
 
-const Header = ({ logout, startGame, isLoggedIn, user }) => {
+const Header = ({ logout, startGame, auth: { isLoggedIn, user }}) => {
   const leftGuestLinks = (
     <Fragment>
       <Nav.Link href='/sign_in'>Sign in</Nav.Link>
@@ -47,13 +47,11 @@ const Header = ({ logout, startGame, isLoggedIn, user }) => {
 Header.propTypes = {
   logout: PropTypes.func.isRequired,
   startGame: PropTypes.func.isRequired,
-  user: PropTypes.object,
-  isLoggedIn: PropTypes.bool.isRequired,
+  auth: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = state => ({
-  isLoggedIn: state.authReducer.isLoggedIn,
-  user: state.authReducer.user,
+  auth: state.auth,
 })
 
 export default connect(mapStateToProps, { logout, startGame })(Header)

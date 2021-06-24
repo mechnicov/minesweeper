@@ -1,18 +1,13 @@
 import React, { useEffect, Fragment } from 'react'
-import { useHistory } from 'react-router'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import GamesList from './GamesList'
 import { loadUser } from '../../actions/authActions'
 
-const Games = ({ loadUser, user }) => {
-  let history = useHistory()
-
+const Games = ({ loadUser, auth: { user }}) => {
   useEffect(() => {
     loadUser()
-
-    !user && history.push('/')
 
     // eslint-disable-next-line
   }, [])
@@ -29,11 +24,11 @@ const Games = ({ loadUser, user }) => {
 
 Games.propTypes = {
   loadUser: PropTypes.func.isRequired,
-  user: PropTypes.object,
+  auth: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = state => ({
-  user: state.authReducer.user,
+  auth: state.auth,
 })
 
 export default connect(mapStateToProps, { loadUser })(Games)

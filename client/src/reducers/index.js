@@ -5,8 +5,8 @@ import gameReducer from './gameReducer'
 import settingsReducer from './settingsReducer'
 
 export default combineReducers({
-  alertReducer,
-  authReducer,
-  gameReducer,
-  settingsReducer,
+  alert: alertReducer,
+  auth: authReducer,
+  games: gameReducer,
+  settings: settingsReducer,
 })

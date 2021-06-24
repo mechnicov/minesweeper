@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router'
+import history from '../../history'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Form, Button } from 'react-bootstrap'
 
 import { login } from '../../actions/authActions'
 
-const Login = ({ login, isLoggedIn }) => {
-  let history = useHistory()
-
+const Login = ({ login, auth: { isLoggedIn }}) => {
   useEffect(() => {
     if (isLoggedIn) {
       history.push('/')
@@ -63,11 +61,11 @@ const Login = ({ login, isLoggedIn }) => {
 
 Login.propTypes = {
   login: PropTypes.func.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
+  auth: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = state => ({
-  isLoggedIn: state.authReducer.isLoggedIn,
+  auth: state.auth,
 })
 
 export default connect(mapStateToProps, { login })(Login)

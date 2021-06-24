@@ -6,7 +6,7 @@ import { Form, Button } from 'react-bootstrap'
 import { loadUser } from '../../actions/authActions'
 import { getSettings, updateSettings } from '../../actions/settingsActions'
 
-const Settings = ({ loadUser, getSettings, updateSettings, user, settings }) => {
+const Settings = ({ loadUser, getSettings, updateSettings, auth: { user }, settings: { settings }}) => {
   useEffect(() => {
     if (user === null) loadUser()
 
@@ -96,13 +96,13 @@ Settings.propTypes = {
   loadUser: PropTypes.func.isRequired,
   getSettings: PropTypes.func.isRequired,
   updateSettings: PropTypes.func.isRequired,
-  user: PropTypes.object,
-  settings: PropTypes.object,
+  auth: PropTypes.object.isRequired,
+  settings: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = state => ({
-  user: state.authReducer.user,
-  settings: state.settingsReducer.settings,
+  auth: state.auth,
+  settings: state.settings,
 })
 
 export default connect(mapStateToProps, { loadUser, getSettings, updateSettings })(Settings)

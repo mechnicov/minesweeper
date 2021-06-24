@@ -7,7 +7,7 @@ import Cell from './Cell'
 import { loadUser } from '../../actions/authActions'
 import { getOneGame } from '../../actions/gameActions'
 
-const Game = ({ loadUser, getOneGame, game }) => {
+const Game = ({ loadUser, getOneGame, games: { game }}) => {
   const gameId = useParams().id
 
   useEffect(() => {
@@ -48,11 +48,11 @@ const Game = ({ loadUser, getOneGame, game }) => {
 Game.propTypes = {
   loadUser: PropTypes.func.isRequired,
   getOneGame: PropTypes.func.isRequired,
-  game: PropTypes.object,
+  games: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = state => ({
-  game: state.gameReducer.game,
+  games: state.games,
 })
 
 export default connect(mapStateToProps, { loadUser, getOneGame })(Game)
