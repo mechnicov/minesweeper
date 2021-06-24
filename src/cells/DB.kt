@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.IntIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object Cells : IntIdTable() {
     val x = integer("x")
@@ -13,7 +14,7 @@ object Cells : IntIdTable() {
     val isBomb = bool("is_bomb").default(false)
     val bombsNear = integer("bombs_near")
     val status = enumerationByName("status", 20, CellStatus::class).default(CellStatus.CLOSED)
-    val game = reference("game_id", Games)
+    val game = reference("game_id", Games, onDelete = ReferenceOption.CASCADE)
 }
 
 class Cell(id: EntityID<Int>) : IntEntity(id) {
