@@ -3,14 +3,19 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import GamesList from './GamesList'
+import Preloader from '../layout/Preloader'
 import { loadUser } from '../../actions/authActions'
 
-const Games = ({ loadUser, auth: { user }}) => {
+const Games = ({ loadUser, auth: { user, loading }}) => {
   useEffect(() => {
     loadUser()
 
     // eslint-disable-next-line
   }, [])
+
+  if (loading || !user) {
+    return <Preloader/>
+  }
 
   return (
     <Fragment>

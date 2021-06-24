@@ -3,6 +3,7 @@ import {
   GET_GAME,
   OPEN_CELL,
   MARK_CELL,
+  SET_LOADING,
 } from './types'
 
 import history from '../history'
@@ -11,6 +12,10 @@ import { doStartGame, doGetOneGame, doMarkCell, doOpenCell } from '../utils/game
 import { setAlert } from './alertActions'
 
 export const startGame = () => dispatch => {
+  dispatch({
+    type: SET_LOADING,
+  })
+
   return doStartGame().then(response => {
     const game = response.data
 
@@ -36,6 +41,10 @@ export const startGame = () => dispatch => {
 }
 
 export const getOneGame = gameId => dispatch => {
+  dispatch({
+    type: SET_LOADING,
+  })
+
   return doGetOneGame(gameId).then(response => {
     dispatch({
       type: GET_GAME,

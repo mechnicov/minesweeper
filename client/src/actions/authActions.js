@@ -6,6 +6,7 @@ import {
   LOGOUT,
   USER_LOAD,
   USER_NOT_LOAD,
+  SET_LOADING,
 } from './types'
 
 import history from '../history'
@@ -75,6 +76,10 @@ export const logout = () => dispatch => {
 }
 
 export const loadUser = () => dispatch => {
+  dispatch({
+    type: SET_LOADING,
+  })
+
   return doLoadUser().then(data => {
     dispatch({
       type: USER_LOAD,

@@ -4,21 +4,23 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import Cell from './Cell'
-import { loadUser } from '../../actions/authActions'
+import Preloader from '../layout/Preloader'
 import { getOneGame } from '../../actions/gameActions'
 
-const Game = ({ loadUser, getOneGame, games: { game }}) => {
+const Game = ({ getOneGame, games: { game, loading }}) => {
   const gameId = useParams().id
 
   useEffect(() => {
-    loadUser()
-
     if (game === null) {
       getOneGame(gameId)
     }
 
     // eslint-disable-next-line
   }, [game])
+
+  if (loading || !game) {
+    return <Preloader/>
+  }
 
   return (
     <Fragment>
@@ -46,7 +48,6 @@ const Game = ({ loadUser, getOneGame, games: { game }}) => {
 }
 
 Game.propTypes = {
-  loadUser: PropTypes.func.isRequired,
   getOneGame: PropTypes.func.isRequired,
   games: PropTypes.object.isRequired,
 }
@@ -55,4 +56,4 @@ const mapStateToProps = state => ({
   games: state.games,
 })
 
-export default connect(mapStateToProps, { loadUser, getOneGame })(Game)
+export default connect(mapStateToProps, { getOneGame })(Game)
