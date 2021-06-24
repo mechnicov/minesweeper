@@ -10,6 +10,7 @@ import com.mines.cells.Cells
 import com.mines.users.User
 import com.mines.users.Users
 import org.jetbrains.exposed.sql.CurrentDateTime
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object Games : IntIdTable() {
     val width = integer("width")
@@ -18,7 +19,7 @@ object Games : IntIdTable() {
     val bombsCount = integer("bombs_count")
     val openingsCount = integer("openings_count").default(0)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime())
-    val user = reference("user_id", Users)
+    val user = reference("user_id", Users, onDelete = ReferenceOption.CASCADE)
 }
 
 class Game(id: EntityID<Int>) : IntEntity(id) {
