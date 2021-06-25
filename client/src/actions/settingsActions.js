@@ -1,14 +1,17 @@
 import {
   GET_SETTINGS,
   UPDATE_SETTINGS,
+  SET_LOADING,
 } from './types'
-
-import history from '../history'
 
 import { doGetSettings, doUpdateSettings } from '../utils/settingsServices'
 import { setAlert } from './alertActions'
 
 export const getSettings = () => dispatch => {
+  dispatch({
+    type: SET_LOADING,
+  })
+
   return doGetSettings().then(response => {
     dispatch({
       type: GET_SETTINGS,
@@ -21,8 +24,6 @@ export const getSettings = () => dispatch => {
                 error.toString()
 
     dispatch(setAlert(msg))
-
-    history.push('/')
 
     return Promise.resolve()
   })

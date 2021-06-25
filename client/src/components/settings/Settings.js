@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Form, Button } from 'react-bootstrap'
 
+import Preloader from '../layout/Preloader'
 import { loadUser } from '../../actions/authActions'
 import { getSettings, updateSettings } from '../../actions/settingsActions'
 
@@ -13,12 +14,6 @@ const Settings = ({ loadUser, getSettings, updateSettings, auth: { user }, setti
     if (settings !== null) {
       setSettings(settings)
     } else {
-      setSettings({
-        width: '',
-        height: '',
-        bombsCount: '',
-      })
-
       getSettings()
     }
 
@@ -33,12 +28,15 @@ const Settings = ({ loadUser, getSettings, updateSettings, auth: { user }, setti
 
   const { width, height, bombsCount } = updatedSettings
 
+  if (user === null || !user.isAdmin) return <Preloader/>
+
   const onSubmit = e => {
     e.preventDefault()
+    console.log(user)
 
     updateSettings(updatedSettings)
   }
-
+// eslint-disable-next-line
   const onChange = e => setSettings({ ...updatedSettings, [e.target.name]: e.target.value })
 
   return (
