@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-import { authHeader } from './authHeader'
+import { authHeader, BASE_API_URL } from './requestsConstants'
 
 export const doLogin = (email, password) => {
-  return axios.post('/api/v1/auth', { email: email, password: password }).then(response => {
+  return axios.post(`${BASE_API_URL}/auth`, { email: email, password: password }).then(response => {
     if (response.data.token) {
       localStorage.setItem('minesweeper', JSON.stringify(response.data))
     }
@@ -17,7 +17,7 @@ export const doLogout = () => {
 }
 
 export const doRegister = (email, password) => {
-  return axios.post('/api/v1/users', { email: email, password: password }).then(response => {
+  return axios.post(`${BASE_API_URL}/users`, { email: email, password: password }).then(response => {
     if (response.data.token) {
       localStorage.setItem('minesweeper', JSON.stringify(response.data))
     }
@@ -27,5 +27,5 @@ export const doRegister = (email, password) => {
 }
 
 export const doLoadUser = () => {
-  return axios.get('/api/v1/auth', { headers: authHeader() })
+  return axios.get(`${BASE_API_URL}/auth`, { headers: authHeader() })
 }

@@ -39,6 +39,22 @@ fun Application.module(testing: Boolean = false) {
         filter { call -> call.request.path().startsWith("/") }
     }
 
+    install(CORS) {
+        anyHost()
+
+        method(HttpMethod.Options)
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        method(HttpMethod.Patch)
+        header(HttpHeaders.Authorization)
+        header(HttpHeaders.ContentType)
+        header(HttpHeaders.AccessControlAllowOrigin)
+
+        allowSameOrigin = true
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
+    }
+
     install(Authentication) {
         jwt {
             realm = dotenv["JWT_REALM"]

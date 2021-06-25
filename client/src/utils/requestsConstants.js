@@ -1,5 +1,8 @@
 export const authHeader = () => {
-  let headers = { 'Content-Type': 'application/json' }
+  let headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+  }
 
   const minesweeper = JSON.parse(localStorage.getItem('minesweeper'))
 
@@ -9,3 +12,5 @@ export const authHeader = () => {
 
   return headers
 }
+
+export const BASE_API_URL = process.env.REACT_APP_BASE_API_URL

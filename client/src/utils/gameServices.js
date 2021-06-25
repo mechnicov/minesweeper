@@ -1,23 +1,23 @@
 import axios from 'axios'
 
-import { authHeader } from './authHeader'
+import { authHeader, BASE_API_URL } from './requestsConstants'
 
 export const doGetAllGames = () => {
-  return axios.get('/api/v1/games', { headers: authHeader() })
+  return axios.get(`${BASE_API_URL}/games`, { headers: authHeader() })
 }
 
 export const doStartGame = () => {
-  return axios.post('/api/v1/games', {}, { headers: authHeader() })
+  return axios.post(`${BASE_API_URL}/games`, {}, { headers: authHeader() })
 }
 
 export const doGetOneGame = gameId => {
-  return axios.get(`/api/v1/games/${gameId}`, { headers: authHeader() })
+  return axios.get(`${BASE_API_URL}/games/${gameId}`, { headers: authHeader() })
 }
 
 export const doMarkCell = (gameId, x, y) => {
-  return axios.post(`/api/v1/games/${gameId}/mark`, { x: x, y: y } , { headers: authHeader() })
+  return axios.post(`${BASE_API_URL}/games/${gameId}/mark`, { x: x, y: y } , { headers: authHeader() })
 }
 
 export const doOpenCell = (gameId, x, y) => {
-  return axios.post(`/api/v1/games/${gameId}/open`, { x: x, y: y } , { headers: authHeader() })
+  return axios.post(`${BASE_API_URL}/games/${gameId}/open`, { x: x, y: y } , { headers: authHeader() })
 }
