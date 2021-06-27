@@ -68,12 +68,17 @@ const Cell = ({ markCell, openCell, cell: { id, x, y, status, bombsNear, gameId 
     openCell(gameId, x, y)
   }
 
+  const preventSelection = e => {
+    e.preventDefault()
+  }
+
   return (
     <div
       key={id}
       className={klass}
       onClick={open}
       onContextMenu={mark}
+      onMouseDown={preventSelection}
     >
       {content}
     </div>
