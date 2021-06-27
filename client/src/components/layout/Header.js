@@ -33,6 +33,7 @@ const Header = ({ logout, startGame, auth: { isLoggedIn, user }}) => {
 
   return (
     <Navbar style={{ backgroundColor: '#c5b3e6' }} expand='lg'>
+      <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse id='basic-navbar-nav'>
         <Nav className='me-auto'>
           {isLoggedIn ? leftUserLinks : leftGuestLinks}
