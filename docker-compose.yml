@@ -1,5 +1,11 @@
 version: '3'
 services:
+  react:
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    ports:
+      - 3001:80
   db: &db
     image: postgres:13
     ports:
@@ -12,3 +18,12 @@ services:
       - 5556:5432
     env_file:
       - .env.test
+  api:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+      - test_db
+    env_file:
+      - .env
